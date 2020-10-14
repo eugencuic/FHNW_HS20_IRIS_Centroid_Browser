@@ -16,13 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from iris.views import hello_world
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('helloworld/$', hello_world)
 ]
-
-
-
-
