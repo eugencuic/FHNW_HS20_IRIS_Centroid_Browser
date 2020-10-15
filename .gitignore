@@ -1,7 +1,0 @@
-# created by virtualenv automatically
-Lib/
-Scripts/
-env_iris/
-pyvenv.cfg
-iris\iris\__pychache__/
-*.pyc
