@@ -1,1 +1,2 @@
-centroid_webapp/.vscode/
+*.pyc
+iris/.vscode/
