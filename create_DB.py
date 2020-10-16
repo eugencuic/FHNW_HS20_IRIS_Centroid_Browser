@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 engine = create_engine('postgres://postgres@/postgres')
 con = engine.connect()
 con.execute("commit")
-con.execute("create database iris")
+con.execute("CREATE DATABASE iris")
 con.close()
 
 #connect to DB iris with the role postgres
