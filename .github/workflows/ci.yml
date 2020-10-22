@@ -2,7 +2,7 @@
 
 name: Static Code Analysis & Testing
 
-on: [push, pull_requests]
+on: [push, pull_request]
 
 jobs:
   ci:
