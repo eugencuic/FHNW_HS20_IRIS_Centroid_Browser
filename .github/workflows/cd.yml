@@ -10,13 +10,7 @@ on:
 jobs:
   cd:
     runs-on: ubuntu-latest
-if: github.event.pull_request.merged
+    if: github.event.pull_request.merged
     steps:
-    - uses: actions/checkout@v2
     - name: Build the Application
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-    - name: deploy
-      run: |
-        pytest
+      run: echo "Hier kommt noch was..."
