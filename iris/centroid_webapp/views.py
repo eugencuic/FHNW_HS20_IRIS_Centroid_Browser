@@ -7,7 +7,5 @@ def home(request):
 def centroids(request):
     return render(request, 'centroid_webapp/centroids.html')
 
-def subscription(request):
-    return render(request, 'centroid_webapp/subscription.html')
 
 
