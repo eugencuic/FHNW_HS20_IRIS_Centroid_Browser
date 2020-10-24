@@ -1,0 +1,44 @@
+{% extends 'centroid_webapp/main.html' %}
+
+{% block content %}
+
+{% include 'centroid_webapp/status.html'%}
+
+{% include 'centroid_webapp/overview.html'%}
+
+<br>
+
+<div class="row">
+    <div class="col-md-5">
+        <h5>CENTROIDS:</h5>
+        <hr>
+        <div class="card card-body">
+            <a class="btn btn-primary btn-sm btn block" href="">choose Centroid</a>
+            <table class="table table-sm">
+                <tr>
+                    <th></th>
+                    <th>Centroid</th>
+                    <th>Number</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <h5>Last 10 Observations:</5h>
+        <hr>
+        <div class="card card-body">
+            <a class="btn btn-primary btn-sm btn block" href="">Select Observation</a>
+            <table class="table table-sm">
+                <tr>
+                    <th>Centroid</th>
+                    <th>Time/Date</th>
+                    <th>Coordinates</th>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

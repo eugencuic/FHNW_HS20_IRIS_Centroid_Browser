@@ -44,6 +44,13 @@ Das Endprodukt (die Webseite) muss folgende Anforderungen erfüllen:
 * Kontinuierliche Auslieferung von funktionalen Erweiterungen während der Entwicklung der Applikation
 * Sauber strukturiert und kommentiert Code
 
+### Webtechnologie
+
+* Verständnis wie eien Webapplikation aufgebaut ist
+* Die Webapplikation soll durch verschiedene Tests getestet werden
+* Die durchgeführten Tests sollen in einem Testbericht ersichtlich sein
+* Die Webapplikation soll so wenig wie möglich wiederholende Elemente aufweisen beim Aufbau
+
 ## Timeline
 
 Die Arbeitspakete werden mittels GitHub Projects gemanaged. Hierbei wurde eine initiale Liste an Arbeitspaketen (Issues) erfasst, welche im weiteren Verlauf des Projekt noch erweitert werden. Die jeweiligen Issues sind einem Meilenstein zugewiesen. Die Meilensteine sind wie folgt terminiert: (Alle zwei Wochen ist ein Meilenstein fertig)
