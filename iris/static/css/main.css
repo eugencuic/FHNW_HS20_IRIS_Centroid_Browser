@@ -1,0 +1,16 @@
+body{
+    background-color: #ebeff5;
+}
+#total-centroids{
+    background-color: #4cb4c7;
+}
+#total-observations{
+    background-color: #7abecc;
+}
+#time-period{
+    background-color: #7cd1c0;
+}
+
+#centroid-not-done{
+    background-color:#FFB636 ;
+}

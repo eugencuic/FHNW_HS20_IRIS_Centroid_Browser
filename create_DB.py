@@ -2,14 +2,14 @@ import sqlalchemy
 from sqlalchemy import create_engine
 
 #create Database called iris with the role postgres
-engine = create_engine('postgres://postgres@/postgres')
+engine = create_engine('postgres://postgres:admin1234@/postgres')
 con = engine.connect()
 con.execute("commit")
 con.execute("CREATE DATABASE iris")
 con.close()
 
 #connect to DB iris with the role postgres
-engine = create_engine('postgres://postgres@/iris')
+engine = create_engine('postgres://postgres:admin1234@/iris')
 con = engine.connect()
 
 # Create table observation
@@ -42,7 +42,7 @@ con.execute('''
     id_ypixels serial,
     id_observation smallint,
     step smallint,
-    ypixels varchar(100),
+    ypixels int [],
     image varchar(100) )
     ''')
 # Add primary key and foreign key
