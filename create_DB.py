@@ -42,7 +42,7 @@ con.execute('''
     id_ypixels serial,
     id_observation smallint,
     step smallint,
-    ypixels varchar(100),
+    ypixels int [],
     image varchar(100) )
     ''')
 # Add primary key and foreign key
