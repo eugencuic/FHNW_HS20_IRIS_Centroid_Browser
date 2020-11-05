@@ -1,2 +1,3 @@
 *.pyc
 iris/.vscode/
+*.json
