@@ -19,7 +19,7 @@ class CentroidCount(models.Model):
         db_table = 'centroid_count'
 
     def __str__(self):
-        return str(self.id_centroid_count)
+        return 'Oberservation ID: %s , Step: %s' % (self.id_observation, self.step)
 
 
 
@@ -46,4 +46,8 @@ class Ypixels(models.Model):
         db_table = 'ypixels'
 
     def __str__(self):
-        return str(self.id_ypixels)
+        return str(self.id_observation), str(self.step)
+
+# TODO: define how to select observations base on arrays
+class observation_selection(models.Model):
+    pass
