@@ -13,12 +13,32 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+from django.urls import path
 from django.contrib import admin
-from django.urls import path, include
 
+# Use include() to add URLS from the centroid application and authentication system
+from django.urls import include
 
-# TODO: Remove Admin URL
+# Adding URL maps to redirect the base URL to the centroid webapp applikation
+from django.views.generic import RedirectView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('centroid_webapp.urls'))
 ]
+
+
+urlpatterns += [
+    path('centroid_webapp/', include('centroid_webapp.urls')),
+]
+
+urlpatterns += [
+    path('', RedirectView.as_view(url='centroid_webapp/', permanent=True))
+]
+
+#Use static() to add url mapping and add static files during development
+"""
+from django.conf import settings
+from django.conf.urls.static import static
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+"""
