@@ -1,0 +1,51 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+{% include 'centroid_webapp/status.html'%}
+
+<br>
+
+<div class='container'>
+  <div class='row'>
+    <div class='col-sm'>
+      <h1>Centroid Home</h1>
+    </div>
+    <div class='col-sm'>
+      Welcome to Centroid Observations, a website developed by Christopher Frame, Lukas Reber and Eugen Cuic!
+    </div>
+    <div class='col-sm'>
+      <h1>Instructions</h1>
+    </div>
+    <div class='col-sm'>
+        This Website is helpin you to analyse Centroids on the Magnesium
+        bla bla bla
+    </div>
+    </div>
+  </div>
+
+  <br>
+<div class='container'>
+
+  <h1>Centroid List</h1>
+
+  {% if centroid_list %}
+  <ul>
+
+    {% for centroid in centroid_list %}
+      <li>
+        <a href="{{ centroid.get_absolute_url }}">{{ centroid.id_observation }}</a> ({{ centroid.step}})
+      </li>
+    {% endfor %}
+
+  </ul>
+
+  {% else %}
+    <p>There are no centroids in the database or you haven't selected any of them.</p>
+  {% endif %}    
+
+
+</div>
+  
+{% endblock %}
+

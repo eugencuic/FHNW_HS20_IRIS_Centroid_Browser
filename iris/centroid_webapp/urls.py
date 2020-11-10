@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('home/', views.home),
-    path('centroids/', views.centroids),
+    path('', views.index, name='index'),
+    path('', views.CentroidListView.as_view(), name='centroids'),
+    path('<int:pk>', views.CentroidDetailView.as_view(), name='centroid-detail'),
 ]
