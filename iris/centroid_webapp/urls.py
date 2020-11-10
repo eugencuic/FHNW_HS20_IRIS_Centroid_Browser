@@ -3,6 +3,6 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('centroids/', views.CentroidListView.as_view(), name='centroids'),
-    path('centroid/<int:pk>', views.CentroidDetailView.as_view(), name='centroid-detail'),
+    path('', views.CentroidListView.as_view(), name='centroids'),
+    path('<int:pk>', views.CentroidDetailView.as_view(), name='centroid-detail'),
 ]

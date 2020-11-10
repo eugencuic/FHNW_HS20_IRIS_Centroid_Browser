@@ -7,8 +7,8 @@ def index(request):
     """View function for homepage of site."""
 
     # Generate counts of some of the main objects
-    num_centroids = CentroidCount.objects.all().count()
-    num_observations = Observation.objects.all().count()
+    num_centroids = CentroidCount.objects.order_by('centroid').values('centroid').distinct().count()
+    num_observations = Ypixels.objects.all().count()
     
     context = {
         'num_centroids': num_centroids,
