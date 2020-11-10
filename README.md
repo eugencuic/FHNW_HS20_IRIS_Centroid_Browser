@@ -33,6 +33,11 @@ Das Endprodukt (die Webseite) muss folgende Anforderungen erfüllen:
 * Das Datenbankmodell ist so konzipiert, dass die Abfragen welche über die Webseite aufgerufen werden, in angemessener Zeit bearbeitet werden können.
 * Das Datenbankmodell ist so aufgebaut, dass die Daten möglichst speichereffizent abgelegt sind.
 
+### Anforderung Pipeline
+* Die Daten sollen automatisch von der Datenbank auf dem Server0090 ausgelesen und direkt in eine Datenbank auf der virtuellen Maschine geschrieben werden.
+* Die Pipeline soll möglichst effizient die Daten in die Datenbank schreiben.
+* Der Zeitraum, um Daten auszulesen und in die Datenbank zu schreiben, soll einfach anpassbar sein.
+
 ### Softwarekonstruktion
 
 * Versionskontrolle mit Git
