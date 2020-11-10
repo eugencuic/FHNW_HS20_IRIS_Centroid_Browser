@@ -1,0 +1,28 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python package
+
+on:
+  push:
+    branches: [ lukas_reber ]
+  pull_request:
+    branches: [ lukas_reber ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: deploy changes
+      uses: appleboy/ssh-action@master
+      with: 
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: |
+          whoami
+          ls -al
+  
+      
+      
