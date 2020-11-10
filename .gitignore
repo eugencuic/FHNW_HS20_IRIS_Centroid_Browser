@@ -1,3 +1,5 @@
 *.pyc
 iris/.vscode/
 *.json
+.iris/github
+.vscode
