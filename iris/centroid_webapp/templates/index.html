@@ -25,27 +25,12 @@
   </div>
 
   <br>
-<div class='container'>
 
-  <h1>Centroid List</h1>
-
-  {% if centroid_list %}
-  <ul>
-
-    {% for centroid in centroid_list %}
-      <li>
-        <a href="{{ centroid.get_absolute_url }}">{{ centroid.id_observation }}</a> ({{ centroid.step}})
-      </li>
-    {% endfor %}
-
-  </ul>
-
-  {% else %}
-    <p>There are no centroids in the database or you haven't selected any of them.</p>
-  {% endif %}    
-
-
-</div>
+  <form method="GET"> 
+    {% csrf_token %} 
+    {{ form.as_p }} 
+    <input type="submit" value="Submit"> 
+</form> 
   
 {% endblock %}
 
