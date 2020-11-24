@@ -5,6 +5,10 @@ from django.views import generic
 from centroid_webapp.forms import CentroidForm
 import os
 
+# TODO use this function to return list of observations to create list 
+# CentroidCount.objects.filter(centroid__in=[...id,id,...]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
+# 
+
 def index(request):
 
 
@@ -32,7 +36,7 @@ class CentroidListView(generic.ListView):
     paginate_by = 10
     context_object_name = 'centroid_list'
 
-
+'''
 class CentroidDetailView(generic.DetailView):
     # Generic class-based detail view for a observation
     model = CentroidCount
@@ -46,7 +50,7 @@ class CentroidDetailView(generic.DetailView):
 
         return render(request, 'centroids/centroid_detail.html', context={'centroid' : centroid})
 
-'''
+
 def get_centroids(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
