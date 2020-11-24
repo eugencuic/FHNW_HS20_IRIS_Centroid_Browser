@@ -18,11 +18,13 @@ def index(request):
     num_centroids = 52
     num_observations = 3358
     num_timestepoberservations = 2324582
+    image_numbers = [i for i in range(1,54)]
 
     context = {
         'num_centroids': num_centroids,
         'num_observations': num_observations,
         'num_timestepoberservations' : num_timestepoberservations,
+        'images_num': image_numbers
 
     }
 
@@ -30,42 +32,11 @@ def index(request):
     return render(request, 'index.html', context=context)
 
 
-class CentroidListView(generic.ListView):
-    # Generic class-based view for a list of observations
-    model = CentroidCount
-    paginate_by = 10
-    context_object_name = 'centroid_list'
+def list_view(request, img_id):
+    try:
+        centroid = CentroidCount.objects.filter(centroid__in=[img_id]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
+    except Centroid.DoesNotExists:
+        raise Http404('Observation does not exist')
 
-'''
-class CentroidDetailView(generic.DetailView):
-    # Generic class-based detail view for a observation
-    model = CentroidCount
-    context_object_name = 'centroid-detail'
-    # TODO: Check following function if it is necessary anymore
-    def centroid_detail_view(request, primary_key):
-        try:
-            centroid = CentroidCount.objects.get(pk=primary_key)
-        except Centroid.DoesNotExists:
-            raise Http404('Observation does not exist')
+    return render(request, 'centroid_webapp/observation_list.html', context={'centroid' : centroid})
 
-        return render(request, 'centroids/centroid_detail.html', context={'centroid' : centroid})
-
-
-def get_centroids(request):
-    # if this is a POST request we need to process the form data
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = NameForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
-            return HttpResponseRedirect('/thanks/')
-
-    # if a GET (or any other method) we'll create a blank form
-    else:
-        form = NameForm()
-
-    return render(request, 'your-name.html', {'form': form})
-    '''
