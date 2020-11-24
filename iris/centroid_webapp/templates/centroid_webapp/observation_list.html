@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1> Observation List</h1>
+  {% if centroid %}
+  <ul>
+    {% for observation in centroid %}
+      {{ observation }}
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p> There are no observations in the Database</p>
+  {% endif %}
+{% endblock %}
