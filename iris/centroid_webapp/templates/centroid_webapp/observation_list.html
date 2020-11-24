@@ -1,14 +1,42 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1> Observation List</h1>
-  {% if centroid %}
-  <ul>
-    {% for observation in centroid %}
-      {{ observation }}
-    {% endfor %}
-  </ul>
-  {% else %}
-    <p> There are no observations in the Database</p>
-  {% endif %}
+<br>
+<div class= container-fluid>
+  <div class='row'>
+      <div class='col-md-6'>
+        <div class= container-fluid>
+        {% for observation in centroid %}
+          {% if forloop.first %}<div class="row">{% endif %}
+            <div class='col-sm'>
+              <div class='card text-center text-white' id='detail_observation'>
+                <div class='card-header'>
+                  <strong><h6>Observation {{observation}}</h6></strong>
+                </div>
+                <div class='card-body'>
+                    <strong>
+                      <a href="centroid_webapp\observations\details\observation={{obsevation}}\image-1" class="card-link">Image 1</a>
+                      <a href="centroid_webapp\observations\details\observation={{obsevation}}\image-2" class="card-link">Image 2</a>
+                      <a href="centroid_webapp\observations\details\observation={{obsevation}}\image-3" class="card-link">Image 3</a>
+                    </strong>
+                </div>
+              </div>
+            </div>
+            
+            {% if forloop.counter|divisibleby:3 %}</div><br><div class="row">{% endif %}
+            {% if forloop.last %}</div>{% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class='col-md-6'>
+        <h2>
+          test
+        </h2>
+ 
+        test
+        <br>
+    </div>
+  </div>
+</div>
 {% endblock %}
