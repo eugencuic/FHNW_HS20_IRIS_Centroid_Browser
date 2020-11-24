@@ -1,42 +1,41 @@
 <br>
-
-<div class="row">
-    <div class='col-1'></div>
-    <div class="col-4">
-        <div class="col-sm">
-            <div class="card text-center text-white" id="total-observations">
-                <div class="card-header">
-                    <h5 class="card-title">Total available observations</h5>
+<div class='container-fluid'>
+    <div class="row">
+        <div class="col-4">
+            <div class="col-sm">
+                <div class="card text-center text-white" id="total-observations">
+                    <div class="card-header">
+                        <h5 class="card-title">Total available observations</h5>
+                    </div>
+                    <div class="card-body">
+                        <strong><h2><p class='card-text'>{{num_observations}}</p></strong></h2>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <strong><h2><p class='card-text'>{{ num_observations }}</p></strong></h2>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="col-sm">
+                <div class="card text-center text-white" id="total-centroids">
+                    <div class="card-header">
+                        <h5 class="card-title">Total available Centroids</h5>
+                    </div>
+                    <div class="card-body ">
+                        <strong><h2><p class='card-text'>{{num_centroids}}</p></strong></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="col-sm">
+                <div class="card text-center text-white" id="total-timestamps">
+                    <div class="card-header">
+                        <h5 class="card-title">Total available Timesteps</h5>
+                    </div>
+                    <div class="card-body">
+                        <strong><h2><p class='card-text'>{{num_timestepoberservations}}</p></strong></h2>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-3">
-        <div class="col-sm">
-            <div class="card text-center text-white" id="total-centroids">
-                <div class="card-header">
-                    <h5 class="card-title">Total available Centroids</h5>
-                </div>
-                <div class="card-body ">
-                    <strong><h2><p class='card-text'>{{ num_centroids }}</p></strong></h2>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-3">
-        <div class="col-sm">
-            <div class="card text-center text-white" id="total-timestamps">
-                <div class="card-header">
-                    <h5 class="card-title">Total available Timestamps</h5>
-                </div>
-                <div class="card-body">
-                    <strong><h2><p class='card-text'>{{ num_timestepoberservations }}</p></strong></h2>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class='col-1'></div>
 </div>

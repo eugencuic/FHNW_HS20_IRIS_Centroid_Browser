@@ -26,7 +26,7 @@ class CentroidCount(models.Model):
         return reverse('centroid-detail', args=[str(self.id_centroid_count)])
 
     def __str__(self):
-        return 'Observation: %s, Step: %s, Centroid: %s' % (self.id_observation, self.step, self.centroid)
+        return 'Observation: %s' % (self.id_observation)
 
 class Observation(models.Model):
     id_observation = models.SmallAutoField(primary_key=True)

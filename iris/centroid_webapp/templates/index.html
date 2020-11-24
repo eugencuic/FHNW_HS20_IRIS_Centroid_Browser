@@ -9,28 +9,32 @@
 <div class='container'>
   <div class='row'>
     <div class='col-sm'>
-      <h1>Centroid Home</h1>
+      <div cass='row'>
+        <h1>Centroid Home</h1>
+      </div>
+      <div class='row'>
+        Welcome to Centroid Observations, a website developed by <br>Christopher Frame, <br>Lukas Reber and <br>Eugen Cuic!
+      </div>
     </div>
     <div class='col-sm'>
-      Welcome to Centroid Observations, a website developed by Christopher Frame, Lukas Reber and Eugen Cuic!
-    </div>
-    <div class='col-sm'>
-      <h1>Instructions</h1>
-    </div>
-    <div class='col-sm'>
-        This Website is helpin you to analyse Centroids on the Magnesium
-        bla bla bla
-    </div>
+      <div cass='row'>
+        <h1>Instructions</h1>
+      </div>
+      <div class='row'>
+        1. Search for the Group you would like to analyse into more dept bellow <br>
+        2. Click on the corresponding image of the group <br>
+        3. Wait until all the observations with the corresponding centroinds are loaded <br>
+        4. Once the observations are loaded, click on the observation you want to analyse <br>
+        5. Wait until the plot is loaded on the right hand side <br>
+        6. If you want to analyse a different observation, just click on another one at the same page <br>
+        7. If you want to start again, click on "Home" in the menue
+      </div>
     </div>
   </div>
 
   <br>
 
-  <form method="GET"> 
-    {% csrf_token %} 
-    {{ form.as_p }} 
-    <input type="submit" value="Submit"> 
-</form> 
-  
-{% endblock %}
 
+{% include 'centroid_webapp/groups.html'%}
+
+{% endblock %}
