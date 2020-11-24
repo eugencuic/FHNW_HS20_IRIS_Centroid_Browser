@@ -7,6 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.urls import reverse
+from django.contrib.postgres.fields import ArrayField
 
 #TODO: Check if it is necessary to add help_text and add documentations for fields
 class CentroidCount(models.Model):
@@ -25,7 +26,7 @@ class CentroidCount(models.Model):
         return reverse('centroid-detail', args=[str(self.id_centroid_count)])
 
     def __str__(self):
-        return 'Observation: %s, Step: %s, Centroid: %s' % (self.id_observation, self.step, self.centroid)
+        return 'Observation: %s' % (self.id_observation)
 
 class Observation(models.Model):
     id_observation = models.SmallAutoField(primary_key=True)
@@ -54,9 +55,7 @@ class Ypixels(models.Model):
     def __str__(self):
         return 'Centroid ID: %s, Step: %s, IMG_URL: %s' % (self.id_observation, self.step, self.image)
 
-# TODO: define how to select observations base on arrays
-class observation_selection(models.Model):
-    pass
+
 
 #TODO Check wich of those search type are needed
 #https://docs.djangoproject.com/en/2.1/ref/models/querysets/#field-lookups

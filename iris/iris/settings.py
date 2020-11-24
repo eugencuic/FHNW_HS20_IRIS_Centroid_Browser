@@ -29,7 +29,7 @@ SECRET_KEY = 'pwscz10#p6e_j218r+sny(&mln47whe#pfs-w!@)u6szq7=ms&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['213.136.68.142', 'localhost']
 
 
 # Application definition
@@ -80,16 +80,17 @@ WSGI_APPLICATION = 'iris.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-# TODO: Change User and Password
+
+# TODO: Change IP to localhost
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'iris',
         'USER': 'postgres',
-        'PASSWORD': 'admin1234',
-        'HOST': 'localhost',
-        'PORT':'',
+        'PASSWORD': 'lukas4president',
+        'HOST': '213.136.68.142',
+        'PORT':'5432',
     }
 }
 
@@ -131,7 +132,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
 MEDIA_URL = '/images/'
 
 STATICFILES_DIR = [
