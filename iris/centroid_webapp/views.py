@@ -37,7 +37,7 @@ def index(request):
 def list_view(request, img_id):
     try:
         centroid = CentroidCount.objects.filter(centroid__in=[img_id]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-    except Centroid.DoesNotExists:
+    except centroid.DoesNotExists:
         raise Http404('Observation does not exist')
 
     return render(request, 'centroid_webapp/observation_list.html', context={'centroid' : centroid})
