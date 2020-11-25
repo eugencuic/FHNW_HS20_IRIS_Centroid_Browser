@@ -7,6 +7,8 @@ import os
 from plotly.offline import plot
 from plotly.graph_objects import Scatter
 
+print('ok')
+
 
 # TODO use this function to return list of observations to create list 
 # CentroidCount.objects.filter(centroid__in=[...id,id,...]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
