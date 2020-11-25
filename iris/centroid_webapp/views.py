@@ -20,6 +20,8 @@ def index(request):
     num_timestepoberservations = 2324582
     image_numbers = [i for i in range(1,54)]
 
+
+
     context = {
         'num_centroids': num_centroids,
         'num_observations': num_observations,
@@ -35,7 +37,7 @@ def index(request):
 def list_view(request, img_id):
     try:
         centroid = CentroidCount.objects.filter(centroid__in=[img_id]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-    except Centroid.DoesNotExists:
+    except centroid.DoesNotExists:
         raise Http404('Observation does not exist')
 
     return render(request, 'centroid_webapp/observation_list.html', context={'centroid' : centroid})
