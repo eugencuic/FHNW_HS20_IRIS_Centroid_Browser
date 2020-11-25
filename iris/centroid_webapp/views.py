@@ -50,8 +50,6 @@ def list_view(request, centroid, observation, image):
     x_axis_steps = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('step', flat=True))
     y_axis_count = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('count', flat=True))
 
-    x_data = [0,1,2,3]
-    y_data = [x**2 for x in x_data]
     plot_div = plot([Scatter(x=x_axis_steps, y=y_axis_count,
                         mode='lines', name='test',
                         opacity=0.8, marker_color='green')],
