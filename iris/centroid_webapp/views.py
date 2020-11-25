@@ -20,6 +20,8 @@ def index(request):
     num_timestepoberservations = 2324582
     image_numbers = [i for i in range(1,54)]
 
+
+
     context = {
         'num_centroids': num_centroids,
         'num_observations': num_observations,
