@@ -1,22 +1,13 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from centroid_webapp.models import CentroidCount, Observation, Ypixels
-from django.views import generic
-from centroid_webapp.forms import CentroidForm
+
 import os
+
 from plotly.offline import plot
-from plotly.graph_objects import Scatter
-
-print('ok')
-
-
-# TODO use this function to return list of observations to create list 
-# CentroidCount.objects.filter(centroid__in=[...id,id,...]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-# 
+import plotly.graph_objects as go
 
 def index(request):
-
-
     """View function for homepage of site."""
 
     # Generate counts of some of the main objects
@@ -25,43 +16,70 @@ def index(request):
     num_timestepoberservations = 2324582
     image_numbers = [i for i in range(1,54)]
 
-
-
     context = {
         'num_centroids': num_centroids,
         'num_observations': num_observations,
         'num_timestepoberservations' : num_timestepoberservations,
         'images_num': image_numbers
-
     }
 
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
 
-
-def list_view(request, centroid, observation, image):
-    try:
-        observation_list = CentroidCount.objects.filter(centroid__in=[centroid]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-    except observation_list.DoesNotExists:
-        raise Http404('Observation does not exist')
+def list_view(request, centroid, observation):
+    observation_list = CentroidCount.objects.filter(centroid__in=[centroid]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
+    plot_graph = examplePlot(centroid, observation)
     
-    centroid = centroid
-    observation = observation
-    image = image
-
-    x_axis_steps = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('step', flat=True))
-    y_axis_count = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('count', flat=True))
-
-    plot_div = plot([Scatter(x=x_axis_steps, y=y_axis_count,
-                        mode='lines', name='test',
-                        opacity=0.8, marker_color='green')],
-               output_type='div')
-
-
-    return render(request, 'centroid_webapp/observation_list.html', context={'observation_list' : observation_list, 
+    return render(request, 'centroid_webapp/observation_list.html', context={
+                                                                            'observation_list' : observation_list, 
                                                                             'centroid':centroid, 
                                                                             'observation':observation, 
-                                                                            'image':image,
-                                                                            'plot_div':plot_div})
+                                                                            'plot_graph':plot_graph
+                                                                            })
 
+def examplePlot(centroid, observation):
+    # Makes a simple plotly plot, and returns html to be included in template.
+    x = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('step', flat=True))
+    y = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('count', flat=True))
+    y.insert(0, 0)
+    y.append(0)
+    x.insert(0, 0)
+    
+    if not list(CentroidCount.objects.filter(id_observation=observation).values_list('step', flat=True)):
+        x_max=1
+    else:
+        x_max = max(list(CentroidCount.objects.filter(id_observation=observation).values_list('step', flat=True)))
 
+    x.insert(len(x),(x_max+1))
+    
+    scatter = go.Scatter(
+                    x=x, 
+                    y=y, 
+                    mode='lines+markers', 
+                    line = dict(shape = 'spline', color = 'rgb(205, 12, 24)', width= 2),
+                    marker = dict(symbol = "star-diamond", color = 'rgb(17, 157, 255)',size = 4),
+                    name='test', 
+                    opacity=0.8, 
+                    marker_color='green',
+                    connectgaps = True
+                    )
+
+    layout = go.Layout(
+                    title='Appearances for Centroids', 
+                    xaxis=dict(
+                        range=([0,x_max]),
+                        title='Step',
+                    ),
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    
+                    yaxis={
+                        'title':'occurences'
+                        }
+                    )
+    
+    data = [scatter]
+    fig = go.Figure(data=data, layout=layout)
+    plot_div = plot(fig, include_plotlyjs=False, output_type='div')
+
+    return plot_div
