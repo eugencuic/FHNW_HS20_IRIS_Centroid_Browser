@@ -4,6 +4,11 @@ from centroid_webapp.models import CentroidCount, Observation, Ypixels
 from django.views import generic
 from centroid_webapp.forms import CentroidForm
 import os
+from plotly.offline import plot
+from plotly.graph_objects import Scatter
+
+print('ok')
+
 
 # TODO use this function to return list of observations to create list 
 # CentroidCount.objects.filter(centroid__in=[...id,id,...]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
@@ -34,11 +39,29 @@ def index(request):
     return render(request, 'index.html', context=context)
 
 
-def list_view(request, img_id):
+def list_view(request, centroid, observation, image):
     try:
-        centroid = CentroidCount.objects.filter(centroid__in=[img_id]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-    except centroid.DoesNotExists:
+        observation_list = CentroidCount.objects.filter(centroid__in=[centroid]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
+    except observation_list.DoesNotExists:
         raise Http404('Observation does not exist')
+    
+    centroid = centroid
+    observation = observation
+    image = image
 
-    return render(request, 'centroid_webapp/observation_list.html', context={'centroid' : centroid})
+    x_axis_steps = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('step', flat=True))
+    y_axis_count = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('count', flat=True))
+
+    plot_div = plot([Scatter(x=x_axis_steps, y=y_axis_count,
+                        mode='lines', name='test',
+                        opacity=0.8, marker_color='green')],
+               output_type='div')
+
+
+    return render(request, 'centroid_webapp/observation_list.html', context={'observation_list' : observation_list, 
+                                                                            'centroid':centroid, 
+                                                                            'observation':observation, 
+                                                                            'image':image,
+                                                                            'plot_div':plot_div})
+
 
