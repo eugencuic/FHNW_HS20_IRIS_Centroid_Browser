@@ -1,82 +1,93 @@
+<head>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
 {% extends "base_generic.html" %}
 
 {% block content %}
 <br>
-
 <div class='container-fluid'>
   <div class='row'>
-      <div class='col-6 offset-6'>
-        <div class= 'container-fluid'>
-          {% for observation in observation_list %}
-            {% if forloop.first %}<div class="row">{% endif %}
-              <div class='col-sm'>
-                <div class='card text-center text-white' id='detail_observation'>
+    <div class='col-4'>
+      <div class= 'container-fluid'>
+        {% for observation in observation_list %}
+          {% if forloop.first %}
+            <div class="row">
+          {% endif %}
+            <div class='col-sm'>
+              <div class='card text-center text-white' id='detail_observation'>
+                <div class='card-header'>
+                  <strong><h6>Observation {{observation}}</h6></strong>
+                </div>
+                <div class='card-body'>
+                    <strong>
+                      <a href="{{centroid}}&{{observation}}" class="card-link">Details</a>
+                    </strong>
+                </div>
+              </div>
+            </div>
+            {% if forloop.counter|divisibleby:2 %}
+              </div><br><div class="row">
+            {% endif %}
+            {% if forloop.last %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+    </div>
+    <div class='col-8 col-2 offset-4 position-fixed'>
+      <div class='container-fluid'>
+        <div class='row'>
+          <div class='col-sm h-50'>
+            <div class='row'>
+              <div class='col-sm h-50'>
+                <div class='card text-center text-white' id='current-centroid'>
                   <div class='card-header'>
-                    <strong><h6>Observation {{observation}}</h6></strong>
+                    <h5>Current Centroid</h5>
                   </div>
                   <div class='card-body'>
-                      <strong>
-                        <a href="{{centroid}}&{{observation}}&1" class="card-link">Image 1</a>
-                        <a href="{{centroid}}&{{observation}}&2" class="card-link">Image 2</a>
-                        <a href="{{centroid}}&{{observation}}&3" class="card-link">Image 3</a>
-                      </strong>
+                    <h2>{{centroid}}</h2>
                   </div>
                 </div>
               </div>
-              {% if forloop.counter|divisibleby:3 %}</div><br><div class="row">{% endif %}
-              {% if forloop.last %}</div>{% endif %}
-              {% endfor %}
-      </div>
-    </div>
-    <div class='col-6 col-2 position-fixed'>
-      <div class='container-fluid'>
-        <div class='row'>
-          <div class='col-6'>
-            <div class='col-sm'>
-              <div class='card text-center text-white' id='current-centroid'>
-                <div class='card-header'>
-                  <h5>Current Centroid</h5>
+            </div>
+            <br>
+            <div class='row'>
+              <div class='col-sm h-50'>
+                <div class='card text-center text-white' id='current-observation'>
+                  <div class='card-header'>
+                    <h5>Current Observation </h5>
+                  </div>
+                  <div class='card-body'>
+                    <h2>{{observation}}</h2>
+                  </div>
                 </div>
-                <div class='card-body'>
-                  <h2>{{centroid}}</h2>
-                </div>
+              </div>
             </div>
           </div>
-          </div>
-          <div class='col-6'>
-            <div class='col-sm'>
-              <div class='card text-center text-white' id='current-observation'>
-                <div class='card-header'>
-                  <h5>Current Observation </h5>
-                </div>
-                <div class='card-body'>
-                  <h2>{{observation}}</h2>
-                </div>
+          <div class='col-sm h-50'>
+            <div class='row d-flex justify-content-center'>
+              {{plot_graph|safe}}
             </div>
           </div>
         </div>
-      </div>
-
-      <br>
-      <div class='row'>
-        <div class='col'>
-          {% autoescape off %}
-          {{ plot_div }}
-          {% endautoescape %}
+        <br>
+        <div class= 'container-fluid'>
+          <div class='row'>
+            <div class='col'>
+              <img src="https://i.kym-cdn.com/entries/icons/mobile/000/005/635/63e51038_f4b0_682c.jpg" class="img-fluid" alt="Image 1">
+            </div>
+            <div class='col'>
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRyRJ9x9EWj-xAadchnoOzY9okREYqvi6eu6BPVZ5NQ8wXX3fYFbn5xpP6zUxnror3SOXntyaGGIKicQkFDBkKgCBBSOjeEQ8&usqp=CAU&ec=45732304" class="img-fluid" alt="Image 2">
+            </div>
+            <div class='col'>
+              <img src="https://i.kym-cdn.com/photos/images/newsfeed/000/212/165/1323021923001.png" class="img-fluid" alt="Image 3">
+            </div>
+            <div class='col'>
+              <img src="https://i.pinimg.com/originals/e0/7a/dc/e07adce387b56b0a20f032b7a9ca1584.png" class='img-fluid' alt="Image 4">
+            </div>
+        </div>
         </div>
       </div>
-      <br>
-      <div class='row'>
-        <div class='col'>
-          <img src="https://i.kym-cdn.com/entries/icons/mobile/000/005/635/63e51038_f4b0_682c.jpg" class="img-fluid" alt="Image 1">
-        </div>
-        <div class='col'>
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRyRJ9x9EWj-xAadchnoOzY9okREYqvi6eu6BPVZ5NQ8wXX3fYFbn5xpP6zUxnror3SOXntyaGGIKicQkFDBkKgCBBSOjeEQ8&usqp=CAU&ec=45732304" class="img-fluid" alt="Image 2">
-        </div>
-        <div class='col'>
-          <img src="https://i.kym-cdn.com/photos/images/newsfeed/000/212/165/1323021923001.png" class="img-fluid" alt="Image 3">
-        </div>
-      </dic>
     </div>
   </div>
 </div>
