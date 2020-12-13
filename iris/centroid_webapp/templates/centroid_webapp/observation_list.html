@@ -9,32 +9,24 @@
   <div class='row'>
     <div class='col-2'>
       <div class= 'container-fluid'>
-        {% for observation in observation_list %}
-          {% if forloop.first %}
-            <div class="row">
-          {% endif %}
-            <div class='col-sm'>
-              <div class='card text-center text-white' id='detail_observation'>
-                <div class='card-header'>
-                  <strong><h6>Observation {{observation}}</h6></strong>
-                </div>
-                <div class='card-body'>
-                    <strong>
-                      <a href="{{centroid}}&{{observation}}" class="card-link">Details</a>
-                    </strong>
-                </div>
-              </div>
-            </div>
-            {% if forloop.counter|divisibleby:1 %}
-              </div><br><div class="row">
+        <div class='list-group'>
+          {% for observation in observation_list %}
+            {% if forloop.first %}
+              <div class="row">
             {% endif %}
-            {% if forloop.last %}
+              <div class='col-sm'>
+                <a href="{{centroid}}&{{observation}}"  class='list-group-item'><p>Observation Key: {{key_observation}}</p> <p> Observation ID: {{observation}} </p></a> 
               </div>
-            {% endif %}
-          {% endfor %}
+              {% if forloop.counter|divisibleby:1 %}
+                </div><br><div class="row">
+              {% endif %}
+              {% if forloop.last %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>      
         </div>
     </div>
-
     <div class='col-10 col-2 offset-2 position-fixed'>
       <div class='container-fluid'>
         <div class='row'>
@@ -48,6 +40,7 @@
                     <li class="list-group-item">Centroid: {{centroid}}</li>
                     <li class="list-group-item">Observation: {{observation}}</li>
                     <li class="list-group-item">Key: {{key_observation}}</li>
+                    <a href="{{hek_url}}" target="_blank" class="list-group-item">HEK URL</a>
                   </div>
                 </div>
               </div>

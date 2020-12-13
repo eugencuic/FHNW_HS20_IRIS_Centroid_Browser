@@ -37,6 +37,7 @@ def list_view(request, centroid, observation, step=263):
     plot_graph = Plot(centroid, observation)
     plot_image_1400 = plot_1400()
     key_observation = (Observation.objects.get(id_observation__in=[observation])).observation
+    hek_url = (Observation.objects.get(id_observation__in=[observation])).hek_url
 
 
 
@@ -53,6 +54,7 @@ def list_view(request, centroid, observation, step=263):
                                                                             'plot_graph':plot_graph,
                                                                             'plot_image_1400':plot_image_1400,
                                                                             'key_observation':key_observation,
+                                                                            'hek_url':hek_url,
                                                                             'path_1330':path_1330,
                                                                             'path_1400':path_1400,
                                                                             'path_2796':path_2796,
@@ -73,21 +75,31 @@ def Plot(centroid, observation):
         x_max = max(list(CentroidCount.objects.filter(id_observation=observation).values_list('step', flat=True)))
 
     x.insert(len(x),(x_max+1))
-    
+
     scatter = go.Scatter(
                     x=x, 
                     y=y, 
-                    mode='lines+markers', 
-                    line = dict(shape = 'hvh', color = 'rgb(205, 12, 24)', width= 2),
-                    marker = dict(symbol = "star-diamond", color = 'rgb(17, 157, 255)',size = 6),
+                    mode='markers',
+                    #mode='lines+markers', 
+                    #line = dict(shape = 'hvh', color = 'rgb(205, 12, 24)', width= 0.5),
+                    marker = dict(symbol = "star-diamond", color = 'rgb(17, 157, 255)',size = 12),
                     name='test', 
                     opacity=0.8, 
-                    marker_color='green',
+                    marker_color='black',
                     connectgaps = True
                     )
 
+    bar = go.Bar(
+                x=x,
+                y=y,
+                width=0.5,
+                marker=dict(
+                    color='black'
+                ),
+    )
+
     layout = go.Layout(
-                    title='Appearances for Centroids', 
+                    title='Number of appearances for Centroids in Observation', 
                     width=1200,
                     height=500,
                     xaxis=dict(
@@ -99,10 +111,11 @@ def Plot(centroid, observation):
                     
                     yaxis={
                         'title':'occurences'
-                        }
+                        },
+                    showlegend=False,
                     )
     
-    data = [scatter]
+    data = [scatter, bar]
     fig = go.Figure(data=data, layout=layout)
     plot_div = plot(fig, include_plotlyjs=False, output_type='div')
 
@@ -115,7 +128,6 @@ def plot_1400():
 
     # Load image
     #TODO Delete block once relative path is defined
-    module_dir = os.path.dirname(__file__)
     path_to_file = os.path.join(settings.STATIC_SAT_IMG, 'yes.jpg')
 
     # Get Image shape
