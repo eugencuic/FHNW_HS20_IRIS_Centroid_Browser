@@ -136,6 +136,7 @@ STATIC_SAT_IMG = 'centroid_webapp/static/iris_images'
 STATIC_URL = '/static/'
 MEDIA_URL = '/images/'
 
+
 STATICFILES_DIR = [
     os.path.join(BASE_DIR, 'static')
 ]

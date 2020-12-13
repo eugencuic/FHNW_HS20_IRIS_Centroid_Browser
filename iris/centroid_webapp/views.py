@@ -8,7 +8,6 @@ from plotly.offline import plot
 import plotly.graph_objects as go
 from django.conf import settings
 
-from PIL import Image
 import base64
 
 from skimage import io
@@ -36,8 +35,16 @@ def list_view(request, centroid, observation, step=263):
     observation_list = CentroidCount.objects.filter(centroid__in=[centroid]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
     plot_graph = Plot(centroid, observation)
     plot_image_1400 = plot_1400()
-    key_observation = (Observation.objects.get(id_observation__in=[observation])).observation
-    hek_url = (Observation.objects.get(id_observation__in=[observation])).hek_url
+
+    try:
+        key_observation = (Observation.objects.get(id_observation__in=[observation])).observation
+    except Observation.DoesNotExist:
+        key_observation = '00000000_000000_0000000000'
+
+    try:
+        hek_url = (Observation.objects.get(id_observation__in=[observation])).hek_url
+    except Observation.DoesNotExist:
+        hek_url = 'https://www.lmsal.com/hek/'
 
 
 
@@ -80,8 +87,6 @@ def Plot(centroid, observation):
                     x=x, 
                     y=y, 
                     mode='markers',
-                    #mode='lines+markers', 
-                    #line = dict(shape = 'hvh', color = 'rgb(205, 12, 24)', width= 0.5),
                     marker = dict(symbol = "star-diamond", color = 'rgb(17, 157, 255)',size = 12),
                     name='test', 
                     opacity=0.8, 
@@ -128,12 +133,15 @@ def plot_1400():
 
     # Load image
     #TODO Delete block once relative path is defined
-    path_to_file = os.path.join(settings.STATIC_SAT_IMG, 'yes.jpg')
+    #path_to_file = os.path.join(settings.STATIC_SAT_IMG, 'yes.jpg')
+    module_dir = os.path.dirname(__file__)  #current dir
+    path_to_file = os.path.join(module_dir, 'static/iris_images/yes.jpg')   #full path to text.
+
 
     # Get Image shape
     img_array = io.imread(path_to_file)
     # Set dimensions of image
-    height, width, dept = img_array.shape
+    height, width, rgb = img_array.shape
 
     #Find ID of DF of Centroid
     #TODO replace obsevation with variable
@@ -233,7 +241,7 @@ def plot_1400():
                         )
                     )
     data = list(traces.values())
-    fig = go.Figure(data=data, layout=layout)
+    #fig = go.Figure(data=data, layout=layout)
 
     plot_1400 = plot(fig, include_plotlyjs=False, output_type='div')
 

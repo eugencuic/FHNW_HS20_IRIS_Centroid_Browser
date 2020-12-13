@@ -27,6 +27,6 @@ scikit-image==0.17.2
 scipy==1.5.4
 six==1.15.0
 sqlparse==0.4.1
-tifffile==2020.12.8
+tifffile==2020.9.3
 toml==0.10.1
 wrapt==1.12.1
