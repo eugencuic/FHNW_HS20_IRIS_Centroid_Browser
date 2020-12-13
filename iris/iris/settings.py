@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'iris.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'iris',
+        'NAME': 'irisv2',
         'USER': 'postgres',
         'PASSWORD': 'lukas4president',
         'HOST': '213.136.68.142',
@@ -132,8 +132,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_ROOT = '/home/static'
+STATIC_SAT_IMG = 'centroid_webapp/static/iris_images'
 STATIC_URL = '/static/'
 MEDIA_URL = '/images/'
+
 
 STATICFILES_DIR = [
     os.path.join(BASE_DIR, 'static')

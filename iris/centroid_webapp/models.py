@@ -28,9 +28,22 @@ class CentroidCount(models.Model):
     def __str__(self):
         return 'Observation: %s' % (self.id_observation)
 
+class Images(models.Model):
+    id_image = models.AutoField(primary_key=True)
+    path = models.CharField(max_length=75, blank=True, null=True)
+    slit_pos = models.SmallIntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'images'
+
 class Observation(models.Model):
     id_observation = models.SmallAutoField(primary_key=True)
-    observation = models.CharField(max_length=37, blank=True, null=True)
+    observation = models.CharField(max_length=26, blank=True, null=True)
+    x_pixels = models.SmallIntegerField(blank=True, null=True)
+    y_pixels = models.SmallIntegerField(blank=True, null=True)
+    n_steps = models.SmallIntegerField(blank=True, null=True)
+    hek_url = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -38,14 +51,17 @@ class Observation(models.Model):
         ordering = ['id_observation']
 
     def __str__(self):
-        return 'Centroid ID: %s' %(self.id_observation)
+        return 'Observation ID: %s' %(self.observation)
 
 class Ypixels(models.Model):
     id_ypixels = models.AutoField(primary_key=True)
     id_observation = models.ForeignKey(Observation, models.DO_NOTHING, db_column='id_observation', blank=True, null=True)
     step = models.SmallIntegerField(blank=True, null=True)
     ypixels = models.TextField(blank=True, null=True)  # This field type is a guess.
-    image = models.CharField(max_length=100, blank=True, null=True)
+    l_1330 = models.ForeignKey(Images, models.DO_NOTHING, db_column='L_1330', related_name='+', blank=True, null=True)  # Field name made lowercase.
+    l_1400 = models.ForeignKey(Images, models.DO_NOTHING, db_column='L_1400', related_name='+', blank=True, null=True)  # Field name made lowercase.
+    l_2796 = models.ForeignKey(Images, models.DO_NOTHING, db_column='L_2796', related_name='+', blank=True, null=True)  # Field name made lowercase.
+    l_2832 = models.ForeignKey(Images, models.DO_NOTHING, db_column='L_2832', related_name='+', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -53,9 +69,10 @@ class Ypixels(models.Model):
         ordering =  ['id_observation', 'step']
 
     def __str__(self):
-        return 'Centroid ID: %s, Step: %s, IMG_URL: %s' % (self.id_observation, self.step, self.image)
-
-
-
-#TODO Check wich of those search type are needed
-#https://docs.djangoproject.com/en/2.1/ref/models/querysets/#field-lookups
+        return 'Centroid ID: %s, Step: %s, 1330: %s, 1400:%s, 2796: %s, 2832: %s' % (self.id_observation, 
+                                                                                        self.step,
+                                                                                        self.l_1330,
+                                                                                        self.l_1400,
+                                                                                        self.l_2796,
+                                                                                        self.l_2832
+                                                                                        )
