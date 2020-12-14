@@ -7,7 +7,7 @@ from centroid_webapp.views import *
 def test_always_passes():
     assert True
 
-@pytest.mark.django_db
+#@pytest.mark.django_db
 # check for status code 200 and title
 def test_index_view(client):
     url = reverse("index")
