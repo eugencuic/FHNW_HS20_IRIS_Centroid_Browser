@@ -1,5 +1,0 @@
-superuser = iris
-pw = admin1234
-
-postgres pw = admin1234
-user = postgres

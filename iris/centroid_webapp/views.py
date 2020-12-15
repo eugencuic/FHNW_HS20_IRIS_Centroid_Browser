@@ -183,7 +183,7 @@ def plot_1400(observation, centroid, key_observation, nx, ny, step_list):
         # Load image
         #path_to_file = os.path.join(settings.STATIC_URL,  '/iris_images/{}').format(path)   #full path to text.
 
-        path_to_file = os.path.join(settings.BASE_DIR, 'centroid_webapp/static/iris_images/{}').format(path)
+        path_to_file = os.path.join(settings.BASE_DIR, 'centroid_webapp/iris_images/{}').format(path)
 
         # Get Image shape
         img_array = io.imread(path_to_file)
@@ -256,6 +256,9 @@ def plot_1400(observation, centroid, key_observation, nx, ny, step_list):
     plot_1400 = plot(fig, include_plotlyjs=False, output_type='div')
 
     return plot_1400
+
+
+##################################################################################################################
 
 def plot_1330(observation, centroid, key_observation, nx, ny, step_list):
 
