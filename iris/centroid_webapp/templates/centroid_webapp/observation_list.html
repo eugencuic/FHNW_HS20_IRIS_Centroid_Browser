@@ -12,7 +12,7 @@
               <div class="row">
             {% endif %}
               <div class='col-sm'>
-                <a href="{{centroid}}&{{observation}}"  class='list-group-item'><p>Observation Key: {{key_observation}}</p> <p> Observation ID: {{observation}} </p></a> 
+                <a href="{{centroid}}&{{observation}}"  class='list-group-item'> <p> Observation ID: {{observation}} </p></a> 
               </div>
               {% if forloop.counter|divisibleby:1 %}
                 </div><div class="row">
@@ -36,7 +36,7 @@
                     <ul class="list-group list-group-flush">
                       <li class="list-group-item">Centroid: {{centroid}}</li>
                       <li class="list-group-item">Observation: {{observation}}</li>
-                      <li class="list-group-item">Key: {{key_observation}}</li>
+                      <li style="font-size:14px" class="list-group-item">Key:{{key_observation}}</li>
                     </ul>
                   </div>
                   <div class="card-body">
@@ -56,9 +56,17 @@
         <div class= 'container-fluid'>
           <div class='row'>
             <div class='col'>
+              {{plot_image_1330|safe}}
+            </div>
+            <div class='col'>
               {{plot_image_1400|safe}}
             </div>
-
+            <div class='col'>
+              {{plot_image_2796|safe}}
+            </div>
+            <div class='col'>
+              {{plot_image_2832|safe}}
+            </div>
         </div>
         </div>
       </div>

@@ -132,7 +132,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_ROOT = '/home/static'
-STATIC_SAT_IMG = 'centroid_webapp/static/iris_images'
 STATIC_URL = '/static/'
 MEDIA_URL = '/images/'
 
