@@ -30,3 +30,5 @@ sqlparse==0.4.1
 tifffile==2020.9.3
 toml==0.10.1
 wrapt==1.12.1
+pytest==6.2.0
+pytest-django==4.1.0
