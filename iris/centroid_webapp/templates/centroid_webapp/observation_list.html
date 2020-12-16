@@ -7,12 +7,12 @@
     <div class='col-2'>
       <div class= 'container-fluid'>
         <div class='list-group'>
-          {% for observation in observation_list %}
+          {% for item in zipped_list %}
             {% if forloop.first %}
               <div class="row">
             {% endif %}
               <div class='col-sm'>
-                <a href="{{centroid}}&{{observation}}"  class='list-group-item'> <p> Observation ID: {{observation}} </p></a> 
+                <a href="{{centroid}}&{{item.0}}&{{image_choice}}"  class='list-group-item'> <p> Observation ID: {{item.0}} </p> <p>Key: {{item.1}}</p></a> 
               </div>
               {% if forloop.counter|divisibleby:1 %}
                 </div><div class="row">
@@ -55,19 +55,65 @@
         <br>
         <div class= 'container-fluid'>
           <div class='row'>
-            <div class='col'>
-              {{plot_image_1330|safe}}
+            <div class='col-3'>
+              <h3>Please choose Type of Image</h3>
+              <br>
+                <div class = 'text-center'>
+                <a href="/centroid_webapp/observations/{{centroid}}&0&1330" class="btn btn-primary btn-lg active text-center" role="button" aria-pressed="true">1330</a>
+              </div>
+              <br>
+              <div class = 'text-center'>
+                <a href="/centroid_webapp/observations/{{centroid}}&0&1400" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">1400</a>
+              </div>
+              <br>
+              <div class = 'text-center'>
+                <a href="/centroid_webapp/observations/{{centroid}}&0&2796" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">2796</a>
+              </div>
+              <br>
+              <div class = 'text-center'>
+                <a href="/centroid_webapp/observations/{{centroid}}&0&2832" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">2832</a>
+              </div>
             </div>
-            <div class='col'>
-              {{plot_image_1400|safe}}
-            </div>
-            <div class='col'>
-              {{plot_image_2796|safe}}
-            </div>
-            <div class='col'>
-              {{plot_image_2832|safe}}
-            </div>
-        </div>
+            <div class='col-9'>
+              {% if image_choice == 0 %}
+              {% elif image_choice == 1330 %}
+              <div class='row'>
+                <div class='col'>
+                  <h3>You have chosen Image Type 1330</h3>
+                </div>
+                <div class='col'>
+                  {{plot_image_1330|safe}}
+                </div>
+              </div>  
+              {% elif image_choice == 1400 %}
+              <div class='row'>
+                <div class='col'>
+                  <h3>You have chosen Image Type 1400</h3>
+                </div>
+                <div class='col'>
+                  {{plot_image_1400|safe}}
+                </div>
+              </div>  
+              {% elif image_choice == 2796 %}
+              <div class='row'>
+                <div class='col'>
+                  <h3>You have chosen Image Type 2796</h3>
+                </div>
+                <div class='col'>
+                  {{plot_image_2796|safe}}
+                </div>
+              </div>  
+              {% elif image_choice == 2832 %}
+              <div class='row'>
+                <div class='col'>
+                  <h3>You have chosen Image Type 2832</h3>
+                </div>
+                <div class='col'>
+                  {{plot_image_2832|safe}}
+                </div>
+              </div>  
+              {% endif %}
+            </div>  
         </div>
       </div>
     </div>
