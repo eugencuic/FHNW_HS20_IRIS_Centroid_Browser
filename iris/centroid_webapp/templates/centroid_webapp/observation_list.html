@@ -1,7 +1,4 @@
-<!DOCTYPE html>
-<head><script src="https://cdn.plot.ly/plotly-latest.min.js"></script></head>
 {% extends "base_generic.html" %}
-
 {% block content %}
 {% load static %}
 <br>
@@ -15,7 +12,7 @@
               <div class="row">
             {% endif %}
               <div class='col-sm'>
-                <a href="{{centroid}}&{{observation}}"  class='list-group-item'><p>Observation Key: {{key_observation}}</p> <p> Observation ID: {{observation}} </p></a> 
+                <a href="{{centroid}}&{{observation}}"  class='list-group-item'> <p> Observation ID: {{observation}} </p></a> 
               </div>
               {% if forloop.counter|divisibleby:1 %}
                 </div><div class="row">
@@ -34,12 +31,15 @@
             <div class='row'>
               <div class='col-sm h-50'>
                 <div class="card" style="width: 18rem;" id='current-observation'>
-                  <img src="{% static 'images/' "" %}{{centroid}}.png" class='img-fluid' alt='Responsive image'></a>
+                  <img src="{% static 'images/' "" %}{{centroid}}.png" class='img-fluid' alt='Responsive image'>
                   <div class="card-body">
-                    <h5 class="card-title">Current View</h5>
-                    <li class="list-group-item">Centroid: {{centroid}}</li>
-                    <li class="list-group-item">Observation: {{observation}}</li>
-                    <li class="list-group-item">Key: {{key_observation}}</li>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">Centroid: {{centroid}}</li>
+                      <li class="list-group-item">Observation: {{observation}}</li>
+                      <li style="font-size:14px" class="list-group-item">Key:{{key_observation}}</li>
+                    </ul>
+                  </div>
+                  <div class="card-body">
                     <a href="{{hek_url}}" target="_blank" class="list-group-item">HEK URL</a>
                   </div>
                 </div>
@@ -56,14 +56,21 @@
         <div class= 'container-fluid'>
           <div class='row'>
             <div class='col'>
+              {{plot_image_1330|safe}}
+            </div>
+            <div class='col'>
               {{plot_image_1400|safe}}
             </div>
-
+            <div class='col'>
+              {{plot_image_2796|safe}}
+            </div>
+            <div class='col'>
+              {{plot_image_2832|safe}}
+            </div>
         </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+
 
 {% endblock %}

@@ -31,58 +31,76 @@ def index(request):
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
 
-def list_view(request, centroid, observation, step=263):
+def list_view(request, centroid, observation):
+    ## Initial Querrysets in order to load Plots and Graphics
     observation_list = CentroidCount.objects.filter(centroid__in=[centroid]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-    plot_graph = Plot(centroid, observation)
-    plot_image_1400 = plot_1400()
+    key_list = Observation.objects.filter(id_observation__in=[observation_list]).order_by('id_observation').values_list('observation', flat=True)
+        
+    ## Exception Management for initial load of Page
+    try:
+        step_list = CentroidCount.objects.filter(id_observation__in=[observation], centroid=centroid).values_list('step', flat=True)
+    except:
+        step_list = []
 
     try:
         key_observation = (Observation.objects.get(id_observation__in=[observation])).observation
     except Observation.DoesNotExist:
-        key_observation = '00000000_000000_0000000000'
+        key_observation = '20140101_000431_3840257196'
 
     try:
         hek_url = (Observation.objects.get(id_observation__in=[observation])).hek_url
     except Observation.DoesNotExist:
         hek_url = 'https://www.lmsal.com/hek/'
 
+    ## Static variables of plots
+    qs_Observation = Observation.objects.filter(observation=key_observation).values_list('observation', 'x_pixels', 'y_pixels')
+    centroid_df = pd.DataFrame.from_records(qs_Observation.values('observation', 'x_pixels', 'y_pixels'))
+
+    # number of actual pixels in SJI
+    nx = centroid_df['x_pixels'][0]
+    ny = centroid_df['y_pixels'][0]
+
+    # Data for Plots
+    x_values = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('step', flat=True))
+    y_values = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('count', flat=True))
+
+    # Loading Plots
+    plot_graph = Plot(centroid, observation, x_values, y_values)
 
 
-    #TODO Change to other format
-    path_1330 = 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg'
-    path_1400 = 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg'
-    path_2796 = 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg'
-    path_2832 = 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg'
+    if observation == 0:
+        plot_image_1330 = 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg'
+        plot_image_1400 = 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg'
+        plot_image_2796 = 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg'
+        plot_image_2832 = 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg'
+
+    else: 
+        plot_image_1330 = plot_1400(observation, centroid, key_observation, nx, ny, step_list)
+        plot_image_1400 = plot_1400(observation, centroid, key_observation, nx, ny, step_list)
+        plot_image_2796 = plot_1400(observation, centroid, key_observation, nx, ny, step_list)
+        plot_image_2832 = plot_1400(observation, centroid, key_observation, nx, ny, step_list)
 
     return render(request, 'centroid_webapp/observation_list.html', context={
                                                                             'observation_list' : observation_list, 
                                                                             'centroid':centroid, 
                                                                             'observation':observation, 
                                                                             'plot_graph':plot_graph,
+                                                                            'plot_image_1330':plot_image_1330,
                                                                             'plot_image_1400':plot_image_1400,
+                                                                            'plot_image_2796':plot_image_2796,
+                                                                            'plot_image_2832':plot_image_2832,
                                                                             'key_observation':key_observation,
                                                                             'hek_url':hek_url,
-                                                                            'path_1330':path_1330,
-                                                                            'path_1400':path_1400,
-                                                                            'path_2796':path_2796,
-                                                                            'path_2832':path_2832,
                                                                             })
 
-def Plot(centroid, observation):
-    # Makes a simple plotly plot, and returns html to be included in template.
-    x = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('step', flat=True))
-    y = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('count', flat=True))
-    y.insert(0, 0)
-    y.append(0)
-    x.insert(0, 0)
-    
+def Plot(centroid, observation, x, y):
+    # Exception Management for initial load
     if not list(CentroidCount.objects.filter(id_observation=observation).values_list('step', flat=True)):
         x_max=1
     else:
         x_max = max(list(CentroidCount.objects.filter(id_observation=observation).values_list('step', flat=True)))
 
-    x.insert(len(x),(x_max+1))
-
+    ###### PLOT START ######
     scatter = go.Scatter(
                     x=x, 
                     y=y, 
@@ -110,12 +128,15 @@ def Plot(centroid, observation):
                     xaxis=dict(
                         range=([0,x_max]),
                         title='Step',
+                        tick0=0,
                     ),
                     paper_bgcolor='rgba(0,0,0,0)',
                     plot_bgcolor='rgba(0,0,0,0)',
                     
                     yaxis={
-                        'title':'occurences'
+                        'title':'occurences',
+                        'dtick':1,
+                        'tick0':0,
                         },
                     showlegend=False,
                     )
@@ -124,76 +145,85 @@ def Plot(centroid, observation):
     fig = go.Figure(data=data, layout=layout)
     plot_div = plot(fig, include_plotlyjs=False, output_type='div')
 
+    ###### PLOT END ######
+
     return plot_div
 
 
+def plot_1400(observation, centroid, key_observation, nx, ny, step_list):
 
-def plot_1400():
-    #TODO Write funciton to figure out image name
-
-    # Load image
-    #TODO Delete block once relative path is defined
-    #path_to_file = os.path.join(settings.STATIC_SAT_IMG, 'yes.jpg')
-    module_dir = os.path.dirname(__file__)  #current dir
-    path_to_file = os.path.join(module_dir, 'static/iris_images/yes.jpg')   #full path to text.
-
-
-    # Get Image shape
-    img_array = io.imread(path_to_file)
-    # Set dimensions of image
-    height, width, rgb = img_array.shape
-
-    #Find ID of DF of Centroid
-    #TODO replace obsevation with variable
-    qs = Observation.objects.filter(observation='20140910_112825_3860259453').values_list('observation', 'x_pixels', 'y_pixels')
-    centroid_df = pd.DataFrame.from_records(qs.values('observation', 'x_pixels', 'y_pixels'))
-
-
-    #Find ID of image
-    #TODO Replace with variables
-    qs = Ypixels.objects.filter(id_observation=2081, step=2350).values_list('id_ypixels', 'id_observation', 'step', 'ypixels', 'l_1330','l_1400', 'l_2796', 'l_2832')
-    find_id = pd.DataFrame.from_records(qs.values('id_ypixels', 'id_observation', 'step', 'ypixels', 'l_1330','l_1400', 'l_2796', 'l_2832'))
-    id_1400 = find_id.l_1400
-
-    #Get all Data of observation 
-    centroids_array = np.array(find_id['ypixels'][0])
-
-
-    qs = Images.objects.filter(id_image=id_1400).values_list('id_image', 'path', 'slit_pos')
-    find_image = pd.DataFrame.from_records(qs.values('id_image', 'path', 'slit_pos'))
-
-
-    # Which Centroid is activated
-    #TODO Change to variable centroid
-    activations = (centroids_array==21)
-
-    # number of actual pixels in SJI
-    nx, ny = centroid_df['x_pixels'][0], centroid_df['y_pixels'][0]
-    # number of pixels on the raster slit
-    n = len(activations)
-
-    # scale everything to the JPG
-    real_slit_pos = find_image['slit_pos'][0] * img_array.shape[1] / nx
-    x_pos = np.array([real_slit_pos] * n)
-    y_pos = np.array(img_array.shape[1] / ny * np.arange(n))
-
-
-
-    encoded_image = base64.b64encode(open(path_to_file, 'rb').read())
-    img = 'data:image/;base64,{}'.format(encoded_image)
-
-    layout = go.Layout()
+    layout = go.Layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)')
 
     data = []
     fig = go.Figure(data=data, layout=layout)
 
     traces = {}
-    for step in [1,2,3]:
-        fig.add_trace(go.Scatter(
+    for step in step_list:
+        # Find ID of Image
+        qs_Ypixels = Ypixels.objects.filter(id_observation=observation, step=step).values_list('ypixels','l_1400')
+        find_id = pd.DataFrame.from_records(qs_Ypixels.values('ypixels','l_1400'))
+        id_1400 = find_id.l_1400[0]
+
+        #Get Image DataFrame
+        qs_Images = Images.objects.filter(id_image=id_1400).values_list('id_image', 'path', 'slit_pos')
+        find_image = pd.DataFrame.from_records(qs_Images.values('id_image', 'path', 'slit_pos'))
+        path = str(find_image.path[0])
+
+        #Get centroid array 
+        centroids_array = np.array(find_id['ypixels'][0])
+
+        # Which Centroid is activated
+        activations = (centroids_array==centroid)
+
+        # number of pixels on the raster slit
+        n = len(activations)
+
+        # Load image
+        #path_to_file = os.path.join(settings.STATIC_URL,  '/iris_images/{}').format(path)   #full path to text.
+
+        path_to_file = os.path.join(settings.BASE_DIR, 'centroid_webapp/iris_images/{}').format(path)
+
+        # Get Image shape
+        img_array = io.imread(path_to_file)
+
+        # Set dimensions of image
+        height, width, rgb = img_array.shape
+
+        # scale everything to the JPG
+        real_slit_pos = find_image['slit_pos'][0] * img_array.shape[1] / nx
+        x = np.array([real_slit_pos] * n)
+        y = np.array(img_array.shape[1] / ny * np.arange(n))
+
+        # Encode Image for into Plotly readable format
+        encoded_image = base64.b64encode(open(path_to_file, 'rb').read())
+
+        fig.add_trace(
+            go.Scatter(
                 visible=False,
-                x=x_pos[activations[::-1]]+step*-30,
-                y=y_pos[activations[::-1]],
-                ))  
+                mode='markers',
+                x=x[activations[::1]],
+                y=y[activations[::1]],
+                marker=dict(size=4, color='#00ffcd'),
+
+                ))
+
+        fig.add_layout_image(
+            dict(
+                source='data:image/png;base64,{}'.format(encoded_image.decode()),
+                sizing="stretch", opacity=0.9, layer='above')
+            )  
+
+
+        xlim = [0, width]
+        ylim = [0, height]
+        fig.update_layout( 
+                    xaxis=dict(range=[xlim[0],xlim[1]], fixedrange=True,),
+                    yaxis=dict(range=[ylim[0],ylim[1]], fixedrange=True,),
+                    images=[dict(source='data:image/png;base64,{}'.format(encoded_image.decode()))]
+                )
+
 
     fig.data[0].visible=True
 
@@ -201,77 +231,328 @@ def plot_1400():
     for i in range(len(fig.data)):
         step = dict(
             method="update",
-            args=[{"visible": [False] * len(fig.data)},
-                {"title": "Slider switched to step: " + str(i)}],  # layout attribute
+            args=[{"visible": [False] * len(fig.data)}],
         )
+
         step["args"][0]["visible"][i] = True  # Toggle i'th trace to "visible"
         steps.append(step)
 
-    sliders = [dict(
-        active=1,
-        currentvalue={"prefix": "Frequency: "},
-        pad={"t": 50},
-        steps=steps
-    )]
-    xlim = [0, width]
-    ylim = [0, height]
+    sliders = [dict(active=1, pad={"t": 5}, steps=steps )]
+
+    #TODO Check how to integrate bellow lines into loop
+
     fig.update_layout(
                     images= [dict(
-                        source='data:image/png;base64,{}'.format(encoded_image.decode()),
                         xref="paper", yref="paper",
-                        x=0, y=1,
-                        sizex=1, sizey=1,
-                        xanchor="left",
-                        yanchor="top",
-                        #sizing="stretch",
-                        layer="below",
+                        x=0, y=1, sizex=1, sizey=1, xanchor="left", yanchor="top", layer="below",
                         )],
-                        xaxis_showgrid=False, 
-                        yaxis_showgrid=False,
-                        xaxis_zeroline=False, 
-                        yaxis_zeroline=False,
-                        xaxis_visible=True,
-                        yaxis_visible=True,
-                        width=width,
-                        height=height,
+                        xaxis_showgrid=False, yaxis_showgrid=False, xaxis_zeroline=False, yaxis_zeroline=False, xaxis_visible=False, yaxis_visible=False,
+                        width=325, height=375, autosize=False,
                         sliders=sliders,
-                        #template="plotly_white"
-                        xaxis=dict(range=[xlim[0],xlim[1]]),
-                        yaxis=dict(range=[ylim[0],ylim[1]]
-                        )
+                        template="plotly_white",
+                        margin=dict(l=10, r=10, t=5, b=5),
                     )
     data = list(traces.values())
-    #fig = go.Figure(data=data, layout=layout)
-
     plot_1400 = plot(fig, include_plotlyjs=False, output_type='div')
 
     return plot_1400
 
 
+##################################################################################################################
 
-'''
+def plot_1330(observation, centroid, key_observation, nx, ny, step_list):
 
-    try:
-        img = ((Ypixels.objects.get(id_observation=observation, step=step)).l_1330).path
-        path_1330 = os.path.join('https://www.cs.technik.fhnw.ch/iris/sji_png/images/', img)
-    except Ypixels.DoesNotExist:
-        path_1330 = 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg'
+    layout = go.Layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)')
 
-    try:
-        img = ((Ypixels.objects.get(id_observation=observation, step=step)).l_1400).path
-        path_1400 = os.path.join('https://www.cs.technik.fhnw.ch/iris/sji_png/images/', img)
-    except Ypixels.DoesNotExist:
-        path_1400 = 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg'
+    data = []
+    fig = go.Figure(data=data, layout=layout)
 
-    try:
-        img = ((Ypixels.objects.get(id_observation=observation, step=step)).l_2796).path
-        path_2796 = os.path.join('https://www.cs.technik.fhnw.ch/iris/sji_png/images/', img)
-    except Ypixels.DoesNotExist:
-        path_2796 = 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg'
-    try:
-        img = ((Ypixels.objects.get(id_observation=observation, step=step)).l_2832).path
-        path_2832 = os.path.join('https://www.cs.technik.fhnw.ch/iris/sji_png/images/', img)
-    except Ypixels.DoesNotExist:
-        path_2832 = 'https://thumbs.dreamstime.com/b/no-image-available-icon-photo-camera-flat-vector-illustration-132483097.jpg'
-'''
+    traces = {}
+    for step in step_list:
+        # Find ID of Image
+        qs_Ypixels = Ypixels.objects.filter(id_observation=observation, step=step).values_list('ypixels','l_1330')
+        find_id = pd.DataFrame.from_records(qs_Ypixels.values('ypixels','l_1330'))
+        id_1330 = find_id.l_1330[0]
 
+        #Get Image DataFrame
+        qs_Images = Images.objects.filter(id_image=id_1330).values_list('id_image', 'path', 'slit_pos')
+        find_image = pd.DataFrame.from_records(qs_Images.values('id_image', 'path', 'slit_pos'))
+
+        #Get centroid array 
+        centroids_array = np.array(find_id['ypixels'][0])
+
+        # Which Centroid is activated
+        activations = (centroids_array==centroid)
+
+        # number of pixels on the raster slit
+        n = len(activations)
+
+        # Load image
+        #TODO Change path with {{observation key}}
+        module_dir = os.path.dirname(__file__)  #current dir
+        path_to_file = os.path.join(module_dir, 'static/iris_images/yes.jpg')   #full path to text.
+
+        # Get Image shape
+        img_array = io.imread(path_to_file)
+
+        # Set dimensions of image
+        height, width, rgb = img_array.shape
+
+        # scale everything to the JPG
+        real_slit_pos = find_image['slit_pos'][0] * img_array.shape[1] / nx
+        x = np.array([real_slit_pos] * n)
+        y = np.array(img_array.shape[1] / ny * np.arange(n))
+
+        # Encode Image for into Plotly readable format
+        encoded_image = base64.b64encode(open(path_to_file, 'rb').read())
+
+        fig.add_trace(
+            go.Scatter(
+                visible=False,
+                mode='markers',
+                x=x[activations[::1]],
+                y=y[activations[::1]],
+                marker=dict(size=2, color='#00ffcd'),
+
+                ))
+
+        fig.add_layout_image(
+            dict(
+                source='data:image/png;base64,{}'.format(encoded_image.decode()),
+                sizing="stretch", opacity=0.9, layer='above')
+            )  
+
+    fig.data[0].visible=True
+
+    steps=[]
+    for i in range(len(fig.data)):
+        step = dict(
+            method="update",
+            args=[{"visible": [False] * len(fig.data)}],
+        )
+
+        step["args"][0]["visible"][i] = True  # Toggle i'th trace to "visible"
+        steps.append(step)
+
+    sliders = [dict(active=1, pad={"t": 5}, steps=steps )]
+
+    #TODO Check how to integrate bellow lines into loop
+    xlim = [0, width]
+    ylim = [0, height]
+    fig.update_layout(
+                    images= [dict(
+                        xref="paper", yref="paper",
+                        x=0, y=1, sizex=1, sizey=1, xanchor="left", yanchor="top", layer="below",
+                        )],
+                        xaxis_showgrid=False, yaxis_showgrid=False, xaxis_zeroline=False, yaxis_zeroline=False, xaxis_visible=False, yaxis_visible=False,
+                        width=325, height=375, autosize=False,
+                        sliders=sliders,
+                        template="plotly_white",
+                        xaxis=dict(range=[xlim[0],xlim[1]], fixedrange=True,),
+                        yaxis=dict(range=[ylim[0],ylim[1]], fixedrange=True,),
+                        margin=dict(l=10, r=10, t=5, b=5),
+                    )
+    data = list(traces.values())
+    plot_1330 = plot(fig, include_plotlyjs=False, output_type='div')
+
+    return plot_1330
+
+def plot_2796(observation, centroid, key_observation, nx, ny, step_list):
+
+    layout = go.Layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)')
+
+    data = []
+    fig = go.Figure(data=data, layout=layout)
+
+    traces = {}
+    for step in step_list:
+        # Find ID of Image
+        qs_Ypixels = Ypixels.objects.filter(id_observation=observation, step=step).values_list('ypixels','l_1400')
+        find_id = pd.DataFrame.from_records(qs_Ypixels.values('ypixels','l_2796'))
+        id_2796 = find_id.l_2796[0]
+
+        #Get Image DataFrame
+        qs_Images = Images.objects.filter(id_image=id_2796).values_list('id_image', 'path', 'slit_pos')
+        find_image = pd.DataFrame.from_records(qs_Images.values('id_image', 'path', 'slit_pos'))
+
+        #Get centroid array 
+        centroids_array = np.array(find_id['ypixels'][0])
+
+        # Which Centroid is activated
+        activations = (centroids_array==centroid)
+
+        # number of pixels on the raster slit
+        n = len(activations)
+
+        # Load image
+        #TODO Change path with {{observation key}}
+        module_dir = os.path.dirname(__file__)  #current dir
+        path_to_file = os.path.join(module_dir, 'static/iris_images/yes.jpg')   #full path to text.
+
+        # Get Image shape
+        img_array = io.imread(path_to_file)
+
+        # Set dimensions of image
+        height, width, rgb = img_array.shape
+
+        # scale everything to the JPG
+        real_slit_pos = find_image['slit_pos'][0] * img_array.shape[1] / nx
+        x = np.array([real_slit_pos] * n)
+        y = np.array(img_array.shape[1] / ny * np.arange(n))
+
+        # Encode Image for into Plotly readable format
+        encoded_image = base64.b64encode(open(path_to_file, 'rb').read())
+
+        fig.add_trace(
+            go.Scatter(
+                visible=False,
+                mode='markers',
+                x=x[activations[::1]],
+                y=y[activations[::1]],
+                marker=dict(size=2, color='#00ffcd'),
+
+                ))
+
+        fig.add_layout_image(
+            dict(
+                source='data:image/png;base64,{}'.format(encoded_image.decode()),
+                sizing="stretch", opacity=0.9, layer='above')
+            )  
+
+    fig.data[0].visible=True
+
+    steps=[]
+    for i in range(len(fig.data)):
+        step = dict(
+            method="update",
+            args=[{"visible": [False] * len(fig.data)}],
+        )
+
+        step["args"][0]["visible"][i] = True  # Toggle i'th trace to "visible"
+        steps.append(step)
+
+    sliders = [dict(active=1, pad={"t": 5}, steps=steps )]
+
+    #TODO Check how to integrate bellow lines into loop
+    xlim = [0, width]
+    ylim = [0, height]
+    fig.update_layout(
+                    images= [dict(
+                        xref="paper", yref="paper",
+                        x=0, y=1, sizex=1, sizey=1, xanchor="left", yanchor="top", layer="below",
+                        )],
+                        xaxis_showgrid=False, yaxis_showgrid=False, xaxis_zeroline=False, yaxis_zeroline=False, xaxis_visible=False, yaxis_visible=False,
+                        width=325, height=375, autosize=False,
+                        sliders=sliders,
+                        template="plotly_white",
+                        xaxis=dict(range=[xlim[0],xlim[1]], fixedrange=True,),
+                        yaxis=dict(range=[ylim[0],ylim[1]], fixedrange=True,),
+                        margin=dict(l=10, r=10, t=5, b=5),
+                    )
+    data = list(traces.values())
+    plot_2796 = plot(fig, include_plotlyjs=False, output_type='div')
+
+    return plot_2796
+
+def plot_2832(observation, centroid, key_observation, nx, ny, step_list):
+
+    layout = go.Layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)')
+
+    data = []
+    fig = go.Figure(data=data, layout=layout)
+
+    traces = {}
+    for step in step_list:
+        # Find ID of Image
+        qs_Ypixels = Ypixels.objects.filter(id_observation=observation, step=step).values_list('ypixels','l_1400')
+        find_id = pd.DataFrame.from_records(qs_Ypixels.values('ypixels','l_2832'))
+        id_2832 = find_id.l_2832[0]
+
+        #Get Image DataFrame
+        qs_Images = Images.objects.filter(id_image=id_2832).values_list('id_image', 'path', 'slit_pos')
+        find_image = pd.DataFrame.from_records(qs_Images.values('id_image', 'path', 'slit_pos'))
+
+        #Get centroid array 
+        centroids_array = np.array(find_id['ypixels'][0])
+
+        # Which Centroid is activated
+        activations = (centroids_array==centroid)
+
+        # number of pixels on the raster slit
+        n = len(activations)
+
+        # Load image
+        #TODO Change path with {{observation key}}
+        module_dir = os.path.dirname(__file__)  #current dir
+        path_to_file = os.path.join(module_dir, 'static/iris_images/yes.jpg')   #full path to text.
+
+        # Get Image shape
+        img_array = io.imread(path_to_file)
+
+        # Set dimensions of image
+        height, width, rgb = img_array.shape
+
+        # scale everything to the JPG
+        real_slit_pos = find_image['slit_pos'][0] * img_array.shape[1] / nx
+        x = np.array([real_slit_pos] * n)
+        y = np.array(img_array.shape[1] / ny * np.arange(n))
+
+        # Encode Image for into Plotly readable format
+        encoded_image = base64.b64encode(open(path_to_file, 'rb').read())
+
+        fig.add_trace(
+            go.Scatter(
+                visible=False,
+                mode='markers',
+                x=x[activations[::1]],
+                y=y[activations[::1]],
+                marker=dict(size=2, color='#00ffcd'),
+
+                ))
+
+        fig.add_layout_image(
+            dict(
+                source='data:image/png;base64,{}'.format(encoded_image.decode()),
+                sizing="stretch", opacity=0.9, layer='above')
+            )  
+
+    fig.data[0].visible=True
+
+    steps=[]
+    for i in range(len(fig.data)):
+        step = dict(
+            method="update",
+            args=[{"visible": [False] * len(fig.data)}],
+        )
+
+        step["args"][0]["visible"][i] = True  # Toggle i'th trace to "visible"
+        steps.append(step)
+
+    sliders = [dict(active=1, pad={"t": 5}, steps=steps )]
+
+    #TODO Check how to integrate bellow lines into loop
+    xlim = [0, width]
+    ylim = [0, height]
+    fig.update_layout(
+                    images= [dict(
+                        xref="paper", yref="paper",
+                        x=0, y=1, sizex=1, sizey=1, xanchor="left", yanchor="top", layer="below",
+                        )],
+                        xaxis_showgrid=False, yaxis_showgrid=False, xaxis_zeroline=False, yaxis_zeroline=False, xaxis_visible=False, yaxis_visible=False,
+                        width=325, height=375, autosize=False,
+                        sliders=sliders,
+                        template="plotly_white",
+                        xaxis=dict(range=[xlim[0],xlim[1]], fixedrange=True,),
+                        yaxis=dict(range=[ylim[0],ylim[1]], fixedrange=True,),
+                        margin=dict(l=10, r=10, t=5, b=5),
+                    )
+    data = list(traces.values())
+    plot_1400 = plot(fig, include_plotlyjs=False, output_type='div')
+
+    return plot_2832
