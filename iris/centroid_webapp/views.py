@@ -63,9 +63,10 @@ def list_view(request, centroid, observation):
     # Data for Plots
     x_values = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('step', flat=True))
     y_values = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('count', flat=True))
+    x_max = list(CentroidCount.objects.filter(id_observation=observation).values_list('step', flat=True))
 
     # Loading Plots
-    plot_graph = Plot(centroid, observation, x_values, y_values)
+    plot_graph = Plot(x_max, x_values, y_values)
 
 
     if observation == 0:
@@ -93,12 +94,10 @@ def list_view(request, centroid, observation):
                                                                             'hek_url':hek_url,
                                                                             })
 
-def Plot(centroid, observation, x, y):
+def Plot(x_max, x, y):
     # Exception Management for initial load
-    if not list(CentroidCount.objects.filter(id_observation=observation).values_list('step', flat=True)):
+    if not x_max:
         x_max=1
-    else:
-        x_max = max(list(CentroidCount.objects.filter(id_observation=observation).values_list('step', flat=True)))
 
     ###### PLOT START ######
     scatter = go.Scatter(
@@ -133,11 +132,11 @@ def Plot(centroid, observation, x, y):
                     paper_bgcolor='rgba(0,0,0,0)',
                     plot_bgcolor='rgba(0,0,0,0)',
                     
-                    yaxis={
-                        'title':'occurences',
-                        'dtick':1,
-                        'tick0':0,
-                        },
+                    yaxis=dict(
+                        title= 'Occurences',
+                        dtick=1,
+                        tick0=0 
+                        ),
                     showlegend=False,
                     )
     

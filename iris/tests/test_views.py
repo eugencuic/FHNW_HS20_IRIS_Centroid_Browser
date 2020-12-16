@@ -4,11 +4,8 @@ from django.urls import reverse
 from centroid_webapp.models import *
 from centroid_webapp.views import *
 
-def test_always_passes():
-    assert True
 
-#@pytest.mark.django_db
-# check for status code 200 and title
+# check for status code 200 and value
 def test_index_view(client):
     url = reverse("index")
     request = client.get(url)
