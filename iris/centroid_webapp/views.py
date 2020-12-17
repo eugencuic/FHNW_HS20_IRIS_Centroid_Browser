@@ -33,6 +33,8 @@ def index(request):
     return render(request, 'index.html', context=context)
 
 def list_view(request, centroid, observation, image_choice):
+
+
     ## Initial Querrysets in order to load Plots and Graphics
     if image_choice == 0:
         observation_list = CentroidCount.objects.filter(centroid__in=[centroid]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
@@ -107,10 +109,7 @@ def list_view(request, centroid, observation, image_choice):
         nx = centroid_df['x_pixels'][0]
         ny = centroid_df['y_pixels'][0]
 
-        plot_image_1330 = detail_plot(observation, centroid, key_observation, nx, ny, step_list, image_choice)
-        plot_image_1400 = detail_plot(observation, centroid, key_observation, nx, ny, step_list, image_choice)
-        plot_image_2796 = detail_plot(observation, centroid, key_observation, nx, ny, step_list, image_choice)
-        plot_image_2832 = detail_plot(observation, centroid, key_observation, nx, ny, step_list, image_choice)
+        plot_image = detail_plot(observation, centroid, key_observation, nx, ny, step_list, image_choice)
 
         context={
                                                                             'observation_list' : observation_list, 
@@ -122,10 +121,7 @@ def list_view(request, centroid, observation, image_choice):
                                                                             'plot_graph':plot_graph,
                                                                             'key_observation':key_observation,
                                                                             'hek_url':hek_url,
-                                                                            'plot_image_1330':plot_image_1330,
-                                                                            'plot_image_1400':plot_image_1400,
-                                                                            'plot_image_2796':plot_image_2796,
-                                                                            'plot_image_2832':plot_image_2832,
+                                                                            'plot_image':plot_image,
                                                                             }
 
 
@@ -194,49 +190,19 @@ def detail_plot(observation, centroid, key_observation, nx, ny, step_list, image
     
     traces = {}
     for step in step_list:
-        if image_choice == 1330:
-            # Find ID of Image
-            qs_Ypixels = Ypixels.objects.filter(id_observation=observation, step=step).values_list('ypixels','l_1330')
-            find_id = pd.DataFrame.from_records(qs_Ypixels.values('ypixels','l_1330'))
-            id_1330 = find_id.l_1330[0]
 
-            #Get Image DataFrame
-            qs_Images = Images.objects.filter(id_image=id_1330).values_list('id_image', 'path', 'slit_pos')
-            find_image = pd.DataFrame.from_records(qs_Images.values('id_image', 'path', 'slit_pos'))
-            path = str(find_image.path[0])
+        # Find ID of Image
+        qs_Ypixels = Ypixels.objects.filter(id_observation=observation, step=step).values_list('ypixels',('l_'+str(image_choice)))
+        find_id = pd.DataFrame.from_records(qs_Ypixels.values('ypixels',('l_'+str(image_choice))))
 
-        elif image_choice == 1400:
-            # Find ID of Image
-            qs_Ypixels = Ypixels.objects.filter(id_observation=observation, step=step).values_list('ypixels','l_1400')
-            find_id = pd.DataFrame.from_records(qs_Ypixels.values('ypixels','l_1400'))
-            id_1400 = find_id.l_1400[0]
+        id = qs_Ypixels[0][1]
+        if not id:
+            return "<div>There is no data available for this image type</div>"
 
-            #Get Image DataFrame
-            qs_Images = Images.objects.filter(id_image=id_1400).values_list('id_image', 'path', 'slit_pos')
-            find_image = pd.DataFrame.from_records(qs_Images.values('id_image', 'path', 'slit_pos'))
-            path = str(find_image.path[0])  
-
-        elif image_choice == 2796:
-            # Find ID of Image
-            qs_Ypixels = Ypixels.objects.filter(id_observation=observation, step=step).values_list('ypixels','l_2796')
-            find_id = pd.DataFrame.from_records(qs_Ypixels.values('ypixels','l_2796'))
-            id_2796 = find_id.l_2796[0]
-
-            #Get Image DataFrame
-            qs_Images = Images.objects.filter(id_image=id_1330).values_list('id_image', 'path', 'slit_pos')
-            find_image = pd.DataFrame.from_records(qs_Images.values('id_image', 'path', 'slit_pos'))
-            path = str(find_image.path[0])
-
-        elif image_choice == 2832:
-            # Find ID of Image
-            qs_Ypixels = Ypixels.objects.filter(id_observation=observation, step=step).values_list('ypixels','l_2832')
-            find_id = pd.DataFrame.from_records(qs_Ypixels.values('ypixels','l_2832'))
-            id_2832 = find_id.l_2832[0]
-
-            #Get Image DataFrame
-            qs_Images = Images.objects.filter(id_image=id_2832).values_list('id_image', 'path', 'slit_pos')
-            find_image = pd.DataFrame.from_records(qs_Images.values('id_image', 'path', 'slit_pos'))
-            path = str(find_image.path[0])      
+        #Get Image DataFrame
+        qs_Images = Images.objects.filter(id_image=id).values_list('id_image', 'path', 'slit_pos')
+        find_image = pd.DataFrame.from_records(qs_Images.values('id_image', 'path', 'slit_pos'))
+        path = str(find_image.path[0])  
 
         #Get centroid array 
         centroids_array = np.array(find_id['ypixels'][0])
