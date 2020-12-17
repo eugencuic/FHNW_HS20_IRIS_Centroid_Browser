@@ -7,17 +7,12 @@ import numpy as np
 from plotly.offline import plot
 import plotly.graph_objects as go
 from django.conf import settings
-#import base64
 from skimage import io
 import io as ioo
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import random
 
-#from io import BytesIO
-#import matplotlib
-#matplotlib.use("Agg")
-#import matplotlib.pyplot as plt
 
 def index(request):
     """View function for homepage of site."""
@@ -85,7 +80,6 @@ def list_view(request, centroid, observation, image_choice, step):
         nx = centroid_df['x_pixels'][0]
         ny = centroid_df['y_pixels'][0]
 
-        #plot_image = detail_plot(observation, centroid, key_observation, nx, ny, step_list, image_choice, step)
 
         context={
                                                                             'zipped_list':zipped_list,
@@ -183,9 +177,6 @@ def detail_plot(observation, centroid, nx, ny, image_choice, step):
     # number of pixels on the raster slit
     n = len(activations)
 
-    # plot image
-    #plt.imshow(img_array, origin="upper" )
-
     # scale everything to the JPG
     real_slit_pos = find_image['slit_pos'][0] * img_array.shape[1] / nx
     x = np.array([real_slit_pos] * n)
@@ -209,7 +200,7 @@ def plot_empty():
 
 def plot_png(request, centroid, observation, image_choice, step):
 
-    if image_choice == 0 or step == 0:
+    if image_choice == 0:
         return plot_empty()
 
     key_observation = (Observation.objects.get(id_observation=observation)).observation
