@@ -1,122 +1,105 @@
-{% extends "base_generic.html" %}
-{% block content %}
-{% load static %}
+{% extends "base_generic.html" %} {% block content %} {% load static %}
 <br>
 <div class='container-fluid'>
-  <div class='row'>
-    <div class='col-2'>
-      <div class= 'container-fluid'>
-        <div class='list-group'>
-          {% for item in zipped_list %}
-            {% if forloop.first %}
-              <div class="row">
-            {% endif %}
-              <div class='col-sm'>
-                <a href="{{centroid}}&{{item.0}}&{{image_choice}}"  class='list-group-item'> <p> Observation ID: {{item.0}} </p> <p>Key: {{item.1}}</p></a> 
-              </div>
-              {% if forloop.counter|divisibleby:1 %}
-                </div><div class="row">
-              {% endif %}
-              {% if forloop.last %}
+    <div class='row'>
+        <div class='col-2'>
+            <div class='container-fluid'>
+                <div class='list-group'>
+                    {% for item in zipped_list %} {% if forloop.first %}
+                    <div class="row">
+                        {% endif %}
+                        <div class='col-sm'>
+                            <a href="{{centroid}}&{{item.0}}&{{image_choice}}" class='list-group-item'>
+                                <p> Observation ID: {{item.0}} </p>
+                                <p>Key: {{item.1}}</p>
+                            </a>
+                        </div>
+                        {% if forloop.counter|divisibleby:1 %}
+                    </div>
+                    <div class="row">
+                        {% endif %} {% if forloop.last %}
+                    </div>
+                    {% endif %} {% endfor %}
                 </div>
-              {% endif %}
-            {% endfor %}
-          </div>      
-        </div>
-    </div>
-    <div class='col-10 col-2 offset-2 position-fixed'>
-      <div class='container-fluid'>
-        <div class='row'>
-          <div class='col-2'>
-            <div class='row'>
-              <div class='col-sm h-50'>
-                <div class="card" style="width: 18rem;" id='current-observation'>
-                  <img src="{% static 'images/' "" %}{{centroid}}.png" class='img-fluid' alt='Responsive image'>
-                  <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                      <li class="list-group-item">Centroid: {{centroid}}</li>
-                      <li class="list-group-item">Observation: {{observation}}</li>
-                      <li style="font-size:14px" class="list-group-item">Key:{{key_observation}}</li>
-                    </ul>
-                  </div>
-                  <div class="card-body">
-                    <a href="{{hek_url}}" target="_blank" class="list-group-item">HEK URL</a>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
-          <div class='col-lg'>
-            <div class='row d-flex justify-content-center'>
-              {{plot_graph|safe}}
-            </div>
-          </div>
         </div>
-        <br>
-        <div class= 'container-fluid'>
-          <div class='row'>
-            <div class='col-3'>
-              <h3>Please choose Type of Image</h3>
-              <br>
-                <div class = 'text-center'>
-                <a href="/centroid_webapp/observations/{{centroid}}&0&1330" class="btn btn-primary btn-lg active text-center" role="button" aria-pressed="true">1330</a>
-              </div>
-              <br>
-              <div class = 'text-center'>
-                <a href="/centroid_webapp/observations/{{centroid}}&0&1400" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">1400</a>
-              </div>
-              <br>
-              <div class = 'text-center'>
-                <a href="/centroid_webapp/observations/{{centroid}}&0&2796" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">2796</a>
-              </div>
-              <br>
-              <div class = 'text-center'>
-                <a href="/centroid_webapp/observations/{{centroid}}&0&2832" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">2832</a>
-              </div>
-            </div>
-            <div class='col-9'>
-              {% if image_choice == 0 %}
-              {% elif image_choice == 1330 %}
-              <div class='row'>
-                <div class='col'>
-                  <h3>You have chosen Image Type 1330</h3>
+        <div class='col-10 col-2 offset-2 position-fixed'>
+            <div class='container-fluid'>
+                <div class='row'>
+                    <div class='col-2'>
+                        <div class='row'>
+                            <div class='col-sm h-50'>
+                                <div class="card" style="width: 18rem;" id='current-observation'>
+                                    <img src="{% static 'images/' " " %}{{centroid}}.png" class='img-fluid' alt='Responsive image'>
+                                    <div class="card-body">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">Centroid: {{centroid}}</li>
+                                            <li class="list-group-item">Observation: {{observation}}</li>
+                                            <li style="font-size:14px" class="list-group-item">Key:{{key_observation}}</li>
+                                        </ul>
+                                    </div>
+                                    <div class="card-body">
+                                        <a href="{{hek_url}}" target="_blank" class="list-group-item">HEK URL</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='col-lg'>
+                        <div class='row d-flex justify-content-center'>
+                            {{plot_graph|safe}}
+                        </div>
+                    </div>
                 </div>
-                <div class='col'>
-                  {{plot_image_1330|safe}}
-                </div>
-              </div>  
-              {% elif image_choice == 1400 %}
-              <div class='row'>
-                <div class='col'>
-                  <h3>You have chosen Image Type 1400</h3>
-                </div>
-                <div class='col'>
-                  {{plot_image_1400|safe}}
-                </div>
-              </div>  
-              {% elif image_choice == 2796 %}
-              <div class='row'>
-                <div class='col'>
-                  <h3>You have chosen Image Type 2796</h3>
-                </div>
-                <div class='col'>
-                  {{plot_image_2796|safe}}
-                </div>
-              </div>  
-              {% elif image_choice == 2832 %}
-              <div class='row'>
-                <div class='col'>
-                  <h3>You have chosen Image Type 2832</h3>
-                </div>
-                <div class='col'>
-                  {{plot_image_2832|safe}}
-                </div>
-              </div>  
-              {% endif %}
-            </div>  
-        </div>
-      </div>
-    </div>
+                <br>
+                <div class='container-fluid'>
+                    <div class='row'>
+                        <div class='col-3'>
+                            <h3>Please choose Type of Image</h3>
+                            <br>
+                            <div class='text-center'>
+                                <a href="/centroid_webapp/observations/{{centroid}}&{{observation}}&1330" class="btn btn-primary btn-lg active text-center" role="button" aria-pressed="true">1330</a>
+                            </div>
+                            <br>
+                            <div class='text-center'>
+                                <a href="/centroid_webapp/observations/{{centroid}}&{{observation}}&1400" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">1400</a>
+                            </div>
+                            <br>
+                            <div class='text-center'>
+                                <a href="/centroid_webapp/observations/{{centroid}}&{{observation}}&2796" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">2796</a>
+                            </div>
+                            <br>
+                            <div class='text-center'>
+                                <a href="/centroid_webapp/observations/{{centroid}}&{{observation}}&2832" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">2832</a>
+                            </div>
+                        </div>
+                        <div class='col-9'>
+                            {% if image_choice == 0 %} {% elif image_choice == 1330 %}
+                            <div class='row'>
+                                <div class='col'>
+                                    <h3>You have chosen Image Type 1330</h3>
+                                    {% elif image_choice == 1400 %}
+                                    <div class='row'>
+                                        <div class='col'>
+                                            <h3>You have chosen Image Type 1400</h3>
+                                            {% elif image_choice == 2796 %}
+                                            <div class='row'>
+                                                <div class='col'>
+                                                    <h3>You have chosen Image Type 2796</h3>
+                                                    {% elif image_choice == 2832 %}
+                                                    <div class='row'>
+                                                        <div class='col'>
+                                                            <h3>You have chosen Image Type 2832</h3>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class='col'>
+                                                            {{plot_image|safe}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
 
-{% endblock %}
+                                    {% endblock %}
