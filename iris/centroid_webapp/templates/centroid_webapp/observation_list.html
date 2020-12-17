@@ -9,7 +9,7 @@
                     <div class="row">
                         {% endif %}
                         <div class='col-sm'>
-                            <a href="{{centroid}}&{{item.0}}&{{image_choice}}&{{step}}" class='list-group-item'>
+                            <a href="{{centroid}}&{{item.0}}&{{image_choice}}&0" class='list-group-item'>
                                 <p> Observation ID: {{item.0}} </p>
                                 <p>Key: {{item.1}}</p>
                             </a>
@@ -58,19 +58,19 @@
                             <h3>Please choose Type of Image</h3>
                             <br>
                             <div class='text-center'>
-                                <a href="/centroid_webapp/observations/{{centroid}}&{{observation}}&1330&0" class="btn btn-primary btn-lg active text-center" role="button" aria-pressed="true">1330</a>
+                                <a href="/centroid_webapp/observations/{{centroid}}&{{observation}}&1330&{{step}}" class="btn btn-primary btn-lg active text-center" role="button" aria-pressed="true">1330</a>
                             </div>
                             <br>
                             <div class='text-center'>
-                                <a href="/centroid_webapp/observations/{{centroid}}&{{observation}}&1400&0" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">1400</a>
+                                <a href="/centroid_webapp/observations/{{centroid}}&{{observation}}&1400&{{step}}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">1400</a>
                             </div>
                             <br>
                             <div class='text-center'>
-                                <a href="/centroid_webapp/observations/{{centroid}}&{{observation}}&2796&0" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">2796</a>
+                                <a href="/centroid_webapp/observations/{{centroid}}&{{observation}}&2796&{{step}}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">2796</a>
                             </div>
                             <br>
                             <div class='text-center'>
-                                <a href="/centroid_webapp/observations/{{centroid}}&{{observation}}&2832&0" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">2832</a>
+                                <a href="/centroid_webapp/observations/{{centroid}}&{{observation}}&2832&{{step}}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">2832</a>
                             </div>
                         </div>
                         <div class='col-9'>
@@ -101,6 +101,7 @@
                                         {% for step in step_list %}
                                             <li><a href="{{centroid}}&{{observation}}&{{image_choice}}&{{step}}">{{step}}</a></li>
                                         {% endfor %}
+
 
                             {% elif image_choice == 2796 %}
                             <div class='row'>
