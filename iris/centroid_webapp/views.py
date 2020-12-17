@@ -186,7 +186,7 @@ def detail_plot(observation, centroid, nx, ny, image_choice, step):
     axis = fig.add_subplot(1, 1, 1)
     axis.imshow(img_array, origin="upper")
     axis.scatter( x[activations[::-1]], y[activations[::-1]], c="#04d9ff", s=4 )
-    axis.axis('off')
+    #axis.axis('off')
     axis.plot()
 
     return fig
