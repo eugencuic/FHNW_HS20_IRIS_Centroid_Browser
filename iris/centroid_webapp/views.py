@@ -153,10 +153,7 @@ def Plot(x, y, x_max):
     return plot_div
 
 
-def detail_plot(observation, centroid, key_observation, nx, ny, step_list, image_choice, step):
-
-    if image_choice == 0:
-        return "<div></div>"
+def detail_plot(observation, centroid, nx, ny, image_choice, step):
 
     # Find ID of Image
     qs_Ypixels = Ypixels.objects.filter(id_observation=observation, step=step).values_list('ypixels',('l_'+str(image_choice)))
@@ -164,7 +161,7 @@ def detail_plot(observation, centroid, key_observation, nx, ny, step_list, image
 
     id = qs_Ypixels[0][1]
     if not id:
-        return "<div>There is no data available for this image type</div>"
+        return plot_empty()
 
     #Get Image DataFrame
     qs_Images = Images.objects.filter(id_image=id).values_list('id_image', 'path', 'slit_pos')
@@ -185,62 +182,6 @@ def detail_plot(observation, centroid, key_observation, nx, ny, step_list, image
 
     # number of pixels on the raster slit
     n = len(activations)
-
-    # plot image
-    plt.imshow(img_array, origin="upper" )
-
-    # scale everything to the JPG
-    real_slit_pos = find_image['slit_pos'][0] * img_array.shape[1] / nx
-    x = np.array([real_slit_pos] * n)
-    y = np.array(img_array.shape[0] / ny * np.arange(n))
-
-
-    plt.scatter( x[activations[::-1]], y[activations[::-1]], c="yellow", s=2 )
-    plt.axis('off')
-
-    buf = BytesIO()
-    plt.savefig(buf, format='png')
-    plot = base64.b64encode(buf.getvalue()).decode('utf-8').replace('\n', '')
-    buf.close()
-    
-    return plot
-
-def detail_plot_neu(observation, centroid, nx, ny, image_choice, step):
-
-    if image_choice == 0:
-        return "<div></div>"
-
-    # Find ID of Image
-    qs_Ypixels = Ypixels.objects.filter(id_observation=observation, step=step).values_list('ypixels',('l_'+str(image_choice)))
-    find_id = pd.DataFrame.from_records(qs_Ypixels.values('ypixels',('l_'+str(image_choice))))
-
-    id = qs_Ypixels[0][1]
-    if not id:
-        return "<div>There is no data available for this image type</div>"
-
-    #Get Image DataFrame
-    qs_Images = Images.objects.filter(id_image=id).values_list('id_image', 'path', 'slit_pos')
-    find_image = pd.DataFrame.from_records(qs_Images.values('id_image', 'path', 'slit_pos'))
-    path = str(find_image.path[0])      
-
-    # Load image
-    path_to_file = os.path.join(settings.BASE_DIR, 'centroid_webapp/iris_images/{}').format(path)
-    
-    # Get Image shape
-    img_array = io.imread(path_to_file)
-
-    #Get centroid array 
-    centroids_array = np.array(find_id['ypixels'][0])
-
-    # Which Centroid is activated
-    activations = (centroids_array==centroid)
-
-    # number of pixels on the raster slit
-    n = len(activations)
-
-
-
-    #xs = plot.imshow(img_array, origin="upper" )
 
     # plot image
     #plt.imshow(img_array, origin="upper" )
@@ -250,39 +191,35 @@ def detail_plot_neu(observation, centroid, nx, ny, image_choice, step):
     x = np.array([real_slit_pos] * n)
     y = np.array(img_array.shape[0] / ny * np.arange(n))
 
-
-    #plt.scatter( x[activations[::-1]], y[activations[::-1]], c="yellow", s=2 )
-
-    #fig.scatter( x[activations[::-1]], y[activations[::-1]], c="yellow", s=2 )
-
     fig = Figure()
     axis = fig.add_subplot(1, 1, 1)
-    xs = [1,2,3,4,5,6,6,7]
-    ys = [1,2,3,4,5,9,8,7]
-    axis.plot(xs, ys)
-
-    #plt.axis('off')
+    axis.imshow(img_array, origin="upper")
+    axis.scatter( x[activations[::-1]], y[activations[::-1]], c="#04d9ff", s=4 )
+    axis.axis('off')
+    axis.plot()
 
     return fig
 
-def plot_png(request):
-    key_observation = (Observation.objects.get(id_observation=15)).observation
+def plot_empty():
+    fig = Figure()
+    output = ioo.BytesIO()
+    FigureCanvas(fig).print_png(output)
+
+    return HttpResponse(output.getvalue(), content_type='image/png')
+
+def plot_png(request, centroid, observation, image_choice, step):
+
+    if image_choice == 0 or step == 0:
+        return plot_empty()
+
+    key_observation = (Observation.objects.get(id_observation=observation)).observation
     qs_Observation = Observation.objects.filter(observation=key_observation).values_list('observation', 'x_pixels', 'y_pixels')
     centroid_df = pd.DataFrame.from_records(qs_Observation.values('observation', 'x_pixels', 'y_pixels'))
     # number of actual pixels in SJI
     nx = centroid_df['x_pixels'][0]
     ny = centroid_df['y_pixels'][0]
 
-    #fig = create_figure()
-    fig = detail_plot_neu(15, 5, nx, ny, 1400, 75)
+    fig = detail_plot(observation, centroid, nx, ny, image_choice, step)
     output = ioo.BytesIO()
     FigureCanvas(fig).print_png(output)
     return HttpResponse(output.getvalue(), content_type='image/png')
-
-def create_figure():
-    fig = Figure()
-    axis = fig.add_subplot(1, 1, 1)
-    xs = range(100)
-    ys = [random.randint(1, 50) for x in xs]
-    axis.plot(xs, ys)
-    return fig
