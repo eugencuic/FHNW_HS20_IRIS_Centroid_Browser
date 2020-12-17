@@ -10,7 +10,7 @@
   <div class='row'>
     <div class='col-sm'>
       <div class='row'>
-        <h1>Centroid Webapp Home</h1>
+        <h2>Centroid Webapp Home</h2>
       </div>
       <div class='row'>
         Welcome to Centroid Observations, a website developed by <br>Christopher Frame, <br>Lukas Reber and <br>Eugen Cuic!
@@ -18,18 +18,20 @@
     </div>
     <div class='col-sm'>
       <div class='row'>
-        <h1>Instructions</h1>
+        <h3>Instructions</h3>
       </div>
       <div class='row'>
-        1. Search for the Group you would like to analyse into more dept bellow <br>
+        1. Search for the Group you would like to analyse into more dept below <br>
         2. Click on the corresponding image of the group <br>
-        3. Wait until all the observations with the corresponding centroinds are loaded <br>
+        3. Wait until all the observations with the corresponding centroids are loaded <br>
         4. Once the observations are loaded, click on the observation you want to analyse <br>
-        5. Wait until the plots areloaded<br>
-        6. Check the high level summary on the plot on righ hand side|<br>
-        7. Check the more detailed plots with slits bellow the highlevel plot<br>
-        8. If you want to analyse a different observation from the same centroid, just click on another one at the same page <br>
-        9. If you want to start again, click on "Home" in the menue
+        5. Wait until the plots are loaded<br>
+        6. Check the high level summary on the plot on the right hand side<br>
+        7. If you want to check more detailed plots chose an Image type<br>
+        8. Check the more detailed plots with slits below the highlevel plot<br>
+        9. If you want to analyse a differen Image type, chose another Image type <br>
+        10. If you want to analyse a different observation from the same centroid, just click on another one at the same page <br>
+        11. If you want to start again, click on "Home" in the menu<br>
       </div>
     </div>
   </div>
@@ -42,7 +44,7 @@
 
     {% if forloop.first %}<div class="row">{% endif %}
       <div class="col-sm">
-        <a href="/centroid_webapp/observations/{{num}}&0">
+        <a href="/centroid_webapp/observations/{{num}}&0&0">
         <img src="{% static 'images/' "" %}{{num}}.png" class='img-fluid' alt='Responsive image'>
         </a>    
     </div>
