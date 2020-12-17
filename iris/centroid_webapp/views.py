@@ -36,73 +36,42 @@ def list_view(request, centroid, observation, image_choice):
 
 
     ## Initial Querrysets in order to load Plots and Graphics
-    if image_choice == 0:
-        observation_list = CentroidCount.objects.filter(centroid__in=[centroid]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-        key_list = Observation.objects.filter(id_observation__in=[observation_list]).order_by('id_observation').values_list('observation', flat=True)
-        zipped_list = zip(observation_list, key_list)
-        
-    elif image_choice == 1330:
-        search_list = CentroidCount.objects.filter(centroid__in=[centroid]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-        observation_list = Ypixels.objects.filter(id_observation__in=search_list, l_1330__isnull=False).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-        key_list = Observation.objects.filter(id_observation__in=[search_list]).order_by('id_observation').values_list('observation', flat=True)
-        zipped_list = zip(observation_list, key_list)
+    observation_list = CentroidCount.objects.filter(centroid=centroid).order_by('id_observation').values_list('id_observation', flat=True).distinct()
+    key_list = Observation.objects.filter(id_observation__in=[observation_list]).values_list('observation', flat=True)
+    zipped_list = zip(observation_list, key_list)
 
-    elif image_choice == 1400:
-        search_list = CentroidCount.objects.filter(centroid__in=[centroid]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-        observation_list = Ypixels.objects.filter(id_observation__in=search_list, l_1400__isnull=False).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-        key_list = Observation.objects.filter(id_observation__in=[search_list]).order_by('id_observation').values_list('observation', flat=True)
-        zipped_list = zip(observation_list, key_list)
-
-    elif image_choice == 2796:
-        search_list = CentroidCount.objects.filter(centroid__in=[centroid]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-        observation_list = Ypixels.objects.filter(id_observation__in=search_list, l_2796__isnull=False).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-        key_list = Observation.objects.filter(id_observation__in=[search_list]).order_by('id_observation').values_list('observation', flat=True)
-        zipped_list = zip(observation_list, key_list)
-
-    elif image_choice == 2832:
-        search_list = CentroidCount.objects.filter(centroid__in=[centroid]).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-        observation_list = Ypixels.objects.filter(id_observation__in=search_list, l_2832__isnull=False).order_by('id_observation').values_list('id_observation', flat=True).distinct()
-        key_list = Observation.objects.filter(id_observation__in=[search_list]).order_by('id_observation').values_list('observation', flat=True)
-        zipped_list = zip(observation_list, key_list)
-
-    # Data for Plots
-    x_values = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('step', flat=True))
-    y_values = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('count', flat=True))
-    x_max = list(CentroidCount.objects.filter(id_observation=observation).values_list('step', flat=True))
-
-    # Reusing x_values for step list as it is the same data
-    step_list = x_values
-
-    ## Exception Management for initial load of Page
-    try:
-        key_observation = (Observation.objects.get(id_observation__in=[observation])).observation
-    except Observation.DoesNotExist:
-        key_observation = '00_00_00'
-
-    try:
-        hek_url = (Observation.objects.get(id_observation__in=[observation])).hek_url
-    except Observation.DoesNotExist:
+    if observation == 0:
+        key_observation = 'n/a'
         hek_url = 'https://www.lmsal.com/hek/'
+        plot_graph = "<div>please choose an observation</div>"
 
-    # Loading Plots
-    plot_graph = Plot(x_values, y_values, x_max)
-
-
-    ## Static variables of plots
-    if key_observation == '00_00_00':
         context={
-                                                                            'observation_list' : observation_list, 
-                                                                            'key_list':key_list,
-                                                                            'zipped_list':zipped_list,
-                                                                            'centroid':centroid, 
-                                                                            'observation':observation,
-                                                                            'image_choice':image_choice, 
-                                                                            'plot_graph':plot_graph,
-                                                                            'key_observation':key_observation,
-                                                                            'hek_url':hek_url,
-                                                                            }
-        pass
+                'zipped_list':zipped_list,
+                'centroid':centroid, 
+                'observation':observation,
+                'image_choice':image_choice, 
+                'plot_graph':plot_graph,
+                'key_observation':key_observation,
+                'hek_url':hek_url,
+                }
+
     else:
+        # Data for Plots
+        x_values = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('step', flat=True))
+        y_values = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('count', flat=True))
+        x_max = list(CentroidCount.objects.filter(id_observation=observation).values_list('step', flat=True))
+
+        # Reusing x_values for step list as it is the same data
+        step_list = x_values
+
+        # Loading Plots
+        plot_graph = Plot(x_values, y_values, x_max)
+            
+
+        ## Exception Management for initial load of Page
+        key_observation = (Observation.objects.get(id_observation__in=[observation])).observation
+        hek_url = (Observation.objects.get(id_observation__in=[observation])).hek_url
+            
         qs_Observation = Observation.objects.filter(observation=key_observation).values_list('observation', 'x_pixels', 'y_pixels')
         centroid_df = pd.DataFrame.from_records(qs_Observation.values('observation', 'x_pixels', 'y_pixels'))
         # number of actual pixels in SJI
@@ -112,8 +81,6 @@ def list_view(request, centroid, observation, image_choice):
         plot_image = detail_plot(observation, centroid, key_observation, nx, ny, step_list, image_choice)
 
         context={
-                                                                            'observation_list' : observation_list, 
-                                                                            'key_list':key_list,
                                                                             'zipped_list':zipped_list,
                                                                             'centroid':centroid, 
                                                                             'observation':observation,
@@ -180,6 +147,9 @@ def Plot(x, y, x_max):
 
 
 def detail_plot(observation, centroid, key_observation, nx, ny, step_list, image_choice):
+
+    if image_choice == 0:
+        return "<div></div>"
 
     layout = go.Layout(
         paper_bgcolor='rgba(0,0,0,0)',
