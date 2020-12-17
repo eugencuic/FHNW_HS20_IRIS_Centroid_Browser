@@ -3,3 +3,5 @@ iris/.vscode/
 *.json
 .vscode/
 iris/centroid_webapp/iris_images/
+myvenv/
+.DS_Store

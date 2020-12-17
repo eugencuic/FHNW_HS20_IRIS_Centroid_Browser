@@ -85,6 +85,7 @@ def list_view(request, centroid, observation, image_choice):
     # Loading Plots
     plot_graph = Plot(x_values, y_values, x_max)
 
+
     ## Static variables of plots
     if key_observation == '00_00_00':
         context={
@@ -125,7 +126,6 @@ def list_view(request, centroid, observation, image_choice):
                                                                             'plot_image_1400':plot_image_1400,
                                                                             'plot_image_2796':plot_image_2796,
                                                                             'plot_image_2832':plot_image_2832,
-
                                                                             }
 
 
