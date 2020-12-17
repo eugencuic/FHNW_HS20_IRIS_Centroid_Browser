@@ -144,7 +144,8 @@ def fill_DB(startdate, enddate, con): #date in Format 2014,12,31
 #check if database exists
 connection = None
 try:
-    connection = psycopg2.connect("VM_DB_adress")
+    engine = create_engine(VM_DB_adress)
+    con = engine.connect()
     print("connected to Database")
 
 except:
