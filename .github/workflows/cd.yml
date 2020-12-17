@@ -1,0 +1,22 @@
+#  Workflow to deploy the application to our VM. This only runs after a merge to master
+
+name: deploy the application
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+
+jobs:
+  cd:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged
+    steps:
+    - name: deploy changes
+      uses: appleboy/ssh-action@master
+      with: 
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: sh cd.sh

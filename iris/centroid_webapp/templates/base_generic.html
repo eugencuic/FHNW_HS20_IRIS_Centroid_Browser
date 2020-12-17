@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  {% block title %}<title>Centroid Observer</title>{% endblock %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  {% load static %}
+
+  <style>
+    body{
+        background-color: #ebeff5;
+    }
+    #total-centroids{
+        background-color: #2A7987;
+    }
+    #total-observations{
+        background-color: #18434B;
+    }
+    #total-timestamps{
+        background-color: #4CB4C7
+    }
+    #detail_observation{
+        background-color: #4CB4C7
+    }
+    #current-centroid{
+        background-color: #18434B;
+    }
+    #current-observation{
+        background-color: #2A7987;
+    }
+
+  </style>
+</head>
+<body>
+
+  {% include 'centroid_webapp/navbar.html'%}
+
+  {% block content %}{% endblock %}
+    </div>
+  </div>
+</body>
+
+</html>
