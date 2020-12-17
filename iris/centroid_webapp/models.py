@@ -9,7 +9,6 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.postgres.fields import ArrayField
 
-#TODO: Check if it is necessary to add help_text and add documentations for fields
 class CentroidCount(models.Model):
     id_centroid_count = models.AutoField(primary_key=True)
     id_observation = models.ForeignKey('Observation', models.DO_NOTHING, db_column='id_observation', blank=True, null=True)
@@ -21,9 +20,6 @@ class CentroidCount(models.Model):
         managed = False
         db_table = 'centroid_count'
         ordering = ['id_observation', 'step', 'centroid']
- 
-    def get_absolute_url(self):
-        return reverse('centroid-detail', args=[str(self.id_centroid_count)])
 
     def __str__(self):
         return 'Observation: %s' % (self.id_observation)
