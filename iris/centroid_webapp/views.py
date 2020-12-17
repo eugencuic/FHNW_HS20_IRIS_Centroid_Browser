@@ -7,14 +7,17 @@ import numpy as np
 from plotly.offline import plot
 import plotly.graph_objects as go
 from django.conf import settings
-import base64
+#import base64
 from skimage import io
+import io as ioo
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+import random
 
-
-from io import BytesIO
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
+#from io import BytesIO
+#import matplotlib
+#matplotlib.use("Agg")
+#import matplotlib.pyplot as plt
 
 def index(request):
     """View function for homepage of site."""
@@ -82,7 +85,7 @@ def list_view(request, centroid, observation, image_choice, step):
         nx = centroid_df['x_pixels'][0]
         ny = centroid_df['y_pixels'][0]
 
-        plot_image = detail_plot(observation, centroid, key_observation, nx, ny, step_list, image_choice, step)
+        #plot_image = detail_plot(observation, centroid, key_observation, nx, ny, step_list, image_choice, step)
 
         context={
                                                                             'zipped_list':zipped_list,
@@ -93,7 +96,6 @@ def list_view(request, centroid, observation, image_choice, step):
                                                                             'plot_graph':plot_graph,
                                                                             'key_observation':key_observation,
                                                                             'hek_url':hek_url,
-                                                                            'plot_image':plot_image,
                                                                             }
 
 
@@ -151,10 +153,7 @@ def Plot(x, y, x_max):
     return plot_div
 
 
-def detail_plot(observation, centroid, key_observation, nx, ny, step_list, image_choice, step):
-
-    if image_choice == 0:
-        return "<div></div>"
+def detail_plot(observation, centroid, nx, ny, image_choice, step):
 
     # Find ID of Image
     qs_Ypixels = Ypixels.objects.filter(id_observation=observation, step=step).values_list('ypixels',('l_'+str(image_choice)))
@@ -162,7 +161,7 @@ def detail_plot(observation, centroid, key_observation, nx, ny, step_list, image
 
     id = qs_Ypixels[0][1]
     if not id:
-        return "<div>There is no data available for this image type</div>"
+        return plot_empty()
 
     #Get Image DataFrame
     qs_Images = Images.objects.filter(id_image=id).values_list('id_image', 'path', 'slit_pos')
@@ -185,21 +184,42 @@ def detail_plot(observation, centroid, key_observation, nx, ny, step_list, image
     n = len(activations)
 
     # plot image
-    plt.imshow(img_array, origin="upper" )
+    #plt.imshow(img_array, origin="upper" )
 
     # scale everything to the JPG
     real_slit_pos = find_image['slit_pos'][0] * img_array.shape[1] / nx
     x = np.array([real_slit_pos] * n)
     y = np.array(img_array.shape[0] / ny * np.arange(n))
 
+    fig = Figure()
+    axis = fig.add_subplot(1, 1, 1)
+    axis.imshow(img_array, origin="upper")
+    axis.scatter( x[activations[::-1]], y[activations[::-1]], c="#04d9ff", s=4 )
+    axis.axis('off')
+    axis.plot()
 
-    plt.scatter( x[activations[::-1]], y[activations[::-1]], c="yellow", s=2 )
-    plt.axis('off')
+    return fig
 
-    buf = BytesIO()
-    plt.savefig(buf, format='png')
-    plot = base64.b64encode(buf.getvalue()).decode('utf-8').replace('\n', '')
-    buf.close()
-    
-    return plot
+def plot_empty():
+    fig = Figure()
+    output = ioo.BytesIO()
+    FigureCanvas(fig).print_png(output)
 
+    return HttpResponse(output.getvalue(), content_type='image/png')
+
+def plot_png(request, centroid, observation, image_choice, step):
+
+    if image_choice == 0 or step == 0:
+        return plot_empty()
+
+    key_observation = (Observation.objects.get(id_observation=observation)).observation
+    qs_Observation = Observation.objects.filter(observation=key_observation).values_list('observation', 'x_pixels', 'y_pixels')
+    centroid_df = pd.DataFrame.from_records(qs_Observation.values('observation', 'x_pixels', 'y_pixels'))
+    # number of actual pixels in SJI
+    nx = centroid_df['x_pixels'][0]
+    ny = centroid_df['y_pixels'][0]
+
+    fig = detail_plot(observation, centroid, nx, ny, image_choice, step)
+    output = ioo.BytesIO()
+    FigureCanvas(fig).print_png(output)
+    return HttpResponse(output.getvalue(), content_type='image/png')
