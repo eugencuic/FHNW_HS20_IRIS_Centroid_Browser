@@ -74,32 +74,68 @@
                             </div>
                         </div>
                         <div class='col-9'>
-                            {% if image_choice == 0 %} {% elif image_choice == 1330 %}
+                            {% if image_choice == 0 %} 
+                            
+                            {% elif image_choice == 1330 %}
                             <div class='row'>
                                 <div class='col'>
                                     <h3>You have chosen Image Type 1330</h3>
-                                    {% elif image_choice == 1400 %}
-                                    <div class='row'>
-                                        <div class='col'>
-                                            <h3>You have chosen Image Type 1400</h3>
-                                            {% elif image_choice == 2796 %}
-                                            <div class='row'>
-                                                <div class='col'>
-                                                    <h3>You have chosen Image Type 2796</h3>
-                                                    {% elif image_choice == 2832 %}
-                                                    <div class='row'>
-                                                        <div class='col'>
-                                                            <h3>You have chosen Image Type 2832</h3>
-                                                            {% endif %}
-                                                        </div>
-                                                        <div class='col'>
-                                                            <img src="{% url 'myplot' %}">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <br>
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
+                                        <span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                        {% for step in step_list %}
+                                            <li><a href="{{centroid}}&{{observation}}&{{image_choice}}&{{step}}">{{step}}</a></li>
+                                        {% endfor %}
 
+                            {% elif image_choice == 1400 %}
+                            <div class='row'>
+                                <div class='col'>
+                                    <h3>You have chosen Image Type 1400</h3>
+                                    <br>
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
+                                        <span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                        {% for step in step_list %}
+                                            <li><a href="{{centroid}}&{{observation}}&{{image_choice}}&{{step}}">{{step}}</a></li>
+                                        {% endfor %}
 
-                                    {% endblock %}
+                            {% elif image_choice == 2796 %}
+                            <div class='row'>
+                                <div class='col'>
+                                    <h3>You have chosen Image Type 2796</h3>
+                                    <br>
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
+                                        <span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                        {% for step in step_list %}
+                                            <li><a href="{{centroid}}&{{observation}}&{{image_choice}}&{{step}}">{{step}}</a></li>
+                                        {% endfor %}
+
+                            {% elif image_choice == 2832 %}
+                            <div class='row'>
+                                <div class='col'>
+                                    <h3>You have chosen Image Type 2832</h3>
+                                    <br>
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
+                                        <span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                        {% for step in step_list %}
+                                            <li><a href="{{centroid}}&{{observation}}&{{image_choice}}&{{step}}">{{step}}</a></li>
+                                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class='col'>
+                            <img src="/centroid_webapp/myplot/{{centroid}}&{{observation}}&{{image_choice}}&{{step}}">
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
