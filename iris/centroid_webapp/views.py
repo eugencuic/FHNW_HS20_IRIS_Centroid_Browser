@@ -186,7 +186,9 @@ def detail_plot(observation, centroid, nx, ny, image_choice, step):
     axis = fig.add_subplot(1, 1, 1)
     axis.imshow(img_array, origin="upper")
     axis.scatter( x[activations[::-1]], y[activations[::-1]], c="#04d9ff", s=4 )
+
     axis.axis('off')
+
     axis.plot()
 
     return fig
@@ -213,4 +215,6 @@ def plot_png(request, centroid, observation, image_choice, step):
     fig = detail_plot(observation, centroid, nx, ny, image_choice, step)
     output = ioo.BytesIO()
     FigureCanvas(fig).print_png(output)
+
     return HttpResponse(output.getvalue(), content_type='image/png')
+
