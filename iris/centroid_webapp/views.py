@@ -6,13 +6,10 @@ import pandas as pd
 import numpy as np
 from plotly.offline import plot
 import plotly.graph_objects as go
-from django.conf import settings
 from skimage import io
 import io as ioo
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-
-
 
 def index(request):
     """View function for homepage of site."""
@@ -35,12 +32,12 @@ def index(request):
 
 def list_view(request, centroid, observation, image_choice, step):
 
-
-    ## Initial Querrysets in order to load Plots and Graphics
+    ## Initial Querrysets in order to load Plots and Graphics and Lists
     observation_list = CentroidCount.objects.filter(centroid=centroid).order_by('id_observation').values_list('id_observation', flat=True).distinct()
     key_list = Observation.objects.filter(id_observation__in=[observation_list]).values_list('observation', flat=True)
     zipped_list = zip(observation_list, key_list)
 
+    # Exception Management to 
     if observation == 0:
         key_observation = 'n/a'
         hek_url = 'https://www.lmsal.com/hek/'
@@ -73,13 +70,6 @@ def list_view(request, centroid, observation, image_choice, step):
         ## Exception Management for initial load of Page
         key_observation = (Observation.objects.get(id_observation__in=[observation])).observation
         hek_url = (Observation.objects.get(id_observation__in=[observation])).hek_url
-            
-        qs_Observation = Observation.objects.filter(observation=key_observation).values_list('observation', 'x_pixels', 'y_pixels')
-        centroid_df = pd.DataFrame.from_records(qs_Observation.values('observation', 'x_pixels', 'y_pixels'))
-        # number of actual pixels in SJI
-        nx = centroid_df['x_pixels'][0]
-        ny = centroid_df['y_pixels'][0]
-
 
         context={
                                                                             'zipped_list':zipped_list,
@@ -96,7 +86,6 @@ def list_view(request, centroid, observation, image_choice, step):
 
     return render(request, 'centroid_webapp/observation_list.html', context=context)
 
-
 def Plot(x, y, x_max):
     if not x_max:
         x_max=1
@@ -106,10 +95,10 @@ def Plot(x, y, x_max):
                     y=y, 
                     mode='markers',
                     marker = dict(symbol = "star-diamond", color = 'rgb(17, 157, 255)',size = 12),
-                    name='test', 
                     opacity=0.8, 
                     marker_color='black',
-                    connectgaps = True
+                    connectgaps = True,
+                    name = 'Step: ', 
                     )
 
     bar = go.Bar(
@@ -143,10 +132,11 @@ def Plot(x, y, x_max):
     
     data = [scatter, bar]
     fig = go.Figure(data=data, layout=layout)
+
+    fig.update_layout(hovermode='x unified')
     plot_div = plot(fig, include_plotlyjs=False, output_type='div')
 
     return plot_div
-
 
 def detail_plot(observation, centroid, nx, ny, image_choice, step):
 
@@ -187,7 +177,7 @@ def detail_plot(observation, centroid, nx, ny, image_choice, step):
     axis = fig.add_subplot(1, 1, 1)
     axis.imshow(img_array, origin="upper")
 
-    axis.scatter( x[activations[::-1]], y[activations[::-1]], c="#04d9ff", s=15  )
+    axis.scatter( x[activations[::-1]], y[activations[::-1]], c="#04d9ff", s=10  )
     axis.axis('off')
     axis.plot()
 
