@@ -6,13 +6,10 @@ import pandas as pd
 import numpy as np
 from plotly.offline import plot
 import plotly.graph_objects as go
-from django.conf import settings
 from skimage import io
 import io as ioo
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-
-
 
 def index(request):
     """View function for homepage of site."""
@@ -34,7 +31,6 @@ def index(request):
     return render(request, 'index.html', context=context)
 
 def list_view(request, centroid, observation, image_choice, step):
-
 
     ## Initial Querrysets in order to load Plots and Graphics
     observation_list = CentroidCount.objects.filter(centroid=centroid).order_by('id_observation').values_list('id_observation', flat=True).distinct()
@@ -73,13 +69,6 @@ def list_view(request, centroid, observation, image_choice, step):
         ## Exception Management for initial load of Page
         key_observation = (Observation.objects.get(id_observation__in=[observation])).observation
         hek_url = (Observation.objects.get(id_observation__in=[observation])).hek_url
-            
-        qs_Observation = Observation.objects.filter(observation=key_observation).values_list('observation', 'x_pixels', 'y_pixels')
-        centroid_df = pd.DataFrame.from_records(qs_Observation.values('observation', 'x_pixels', 'y_pixels'))
-        # number of actual pixels in SJI
-        nx = centroid_df['x_pixels'][0]
-        ny = centroid_df['y_pixels'][0]
-
 
         context={
                                                                             'zipped_list':zipped_list,
@@ -95,7 +84,6 @@ def list_view(request, centroid, observation, image_choice, step):
 
 
     return render(request, 'centroid_webapp/observation_list.html', context=context)
-
 
 def Plot(x, y, x_max):
     if not x_max:
@@ -147,7 +135,6 @@ def Plot(x, y, x_max):
 
     return plot_div
 
-
 def detail_plot(observation, centroid, nx, ny, image_choice, step):
 
     # Find ID of Image
@@ -187,7 +174,7 @@ def detail_plot(observation, centroid, nx, ny, image_choice, step):
     axis = fig.add_subplot(1, 1, 1)
     axis.imshow(img_array, origin="upper")
 
-    axis.scatter( x[activations[::-1]], y[activations[::-1]], c="#04d9ff", s=15  )
+    axis.scatter( x[activations[::-1]], y[activations[::-1]], c="#04d9ff", s=10  )
     axis.axis('off')
     axis.plot()
 
