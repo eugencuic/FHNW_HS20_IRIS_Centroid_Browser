@@ -11,7 +11,7 @@ from skimage import io
 import io as ioo
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-import random
+
 
 
 def index(request):
@@ -90,6 +90,7 @@ def list_view(request, centroid, observation, image_choice, step):
                                                                             'plot_graph':plot_graph,
                                                                             'key_observation':key_observation,
                                                                             'hek_url':hek_url,
+                                                                            'step_list':step_list,
                                                                             }
 
 
@@ -163,7 +164,7 @@ def detail_plot(observation, centroid, nx, ny, image_choice, step):
     path = str(find_image.path[0])      
 
     # Load image
-    path_to_file = os.path.join(settings.BASE_DIR, 'centroid_webapp/iris_images/{}').format(path)
+    path_to_file = ( 'https://www.cs.technik.fhnw.ch/iris/sji_png/images//{}').format(path)
     
     # Get Image shape
     img_array = io.imread(path_to_file)
@@ -182,13 +183,12 @@ def detail_plot(observation, centroid, nx, ny, image_choice, step):
     x = np.array([real_slit_pos] * n)
     y = np.array(img_array.shape[0] / ny * np.arange(n))
 
-    fig = Figure()
+    fig = Figure(facecolor='#ebeff5')
     axis = fig.add_subplot(1, 1, 1)
     axis.imshow(img_array, origin="upper")
-    axis.scatter( x[activations[::-1]], y[activations[::-1]], c="#04d9ff", s=4 )
 
+    axis.scatter( x[activations[::-1]], y[activations[::-1]], c="#04d9ff", s=15  )
     axis.axis('off')
-
     axis.plot()
 
     return fig
@@ -215,6 +215,4 @@ def plot_png(request, centroid, observation, image_choice, step):
     fig = detail_plot(observation, centroid, nx, ny, image_choice, step)
     output = ioo.BytesIO()
     FigureCanvas(fig).print_png(output)
-
     return HttpResponse(output.getvalue(), content_type='image/png')
-
