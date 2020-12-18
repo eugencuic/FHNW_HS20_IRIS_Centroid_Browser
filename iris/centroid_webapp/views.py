@@ -32,11 +32,12 @@ def index(request):
 
 def list_view(request, centroid, observation, image_choice, step):
 
-    ## Initial Querrysets in order to load Plots and Graphics
+    ## Initial Querrysets in order to load Plots and Graphics and Lists
     observation_list = CentroidCount.objects.filter(centroid=centroid).order_by('id_observation').values_list('id_observation', flat=True).distinct()
     key_list = Observation.objects.filter(id_observation__in=[observation_list]).values_list('observation', flat=True)
     zipped_list = zip(observation_list, key_list)
 
+    # Exception Management to 
     if observation == 0:
         key_observation = 'n/a'
         hek_url = 'https://www.lmsal.com/hek/'
@@ -94,10 +95,10 @@ def Plot(x, y, x_max):
                     y=y, 
                     mode='markers',
                     marker = dict(symbol = "star-diamond", color = 'rgb(17, 157, 255)',size = 12),
-                    name='test', 
                     opacity=0.8, 
                     marker_color='black',
-                    connectgaps = True
+                    connectgaps = True,
+                    name = 'Step: ', 
                     )
 
     bar = go.Bar(
@@ -131,6 +132,8 @@ def Plot(x, y, x_max):
     
     data = [scatter, bar]
     fig = go.Figure(data=data, layout=layout)
+
+    fig.update_layout(hovermode='x unified')
     plot_div = plot(fig, include_plotlyjs=False, output_type='div')
 
     return plot_div
