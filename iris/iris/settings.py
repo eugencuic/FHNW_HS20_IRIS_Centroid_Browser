@@ -9,11 +9,9 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
 from pathlib import Path
 import os
 
-# TODO: Clean up Settings file: https://docs.djangoproject.com/en/3.1/topics/settings/
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,16 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'pwscz10#p6e_j218r+sny(&mln47whe#pfs-w!@)u6szq7=ms&'
 
-#TODO: Remove Debug once live
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['213.136.68.142', 'localhost']
 
 
 # Application definition
 
-#TODO: Make sure that the tables are in the db in order to let them work
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -81,7 +77,6 @@ WSGI_APPLICATION = 'iris.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-# TODO: Change IP to localhost
 
 DATABASES = {
     'default': {

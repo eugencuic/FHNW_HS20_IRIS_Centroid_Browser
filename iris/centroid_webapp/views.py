@@ -37,12 +37,13 @@ def list_view(request, centroid, observation, image_choice, step):
     key_list = Observation.objects.filter(id_observation__in=[observation_list]).values_list('observation', flat=True)
     zipped_list = zip(observation_list, key_list)
 
-    # Exception Management to 
+    # Exception Management to capture cases where no data is available
     if observation == 0:
         key_observation = 'n/a'
         hek_url = 'https://www.lmsal.com/hek/'
         plot_graph = "<div>please choose an observation</div>"
 
+        # Reduced context data for HTML template. Load only what is needed and available
         context={
                 'zipped_list':zipped_list,
                 'centroid':centroid, 
@@ -55,9 +56,11 @@ def list_view(request, centroid, observation, image_choice, step):
                 }
 
     else:
-        # Data for Plots
+        # Data for Plots. x_values are the steps of the obsevation where the centroid appears and x_values the count. 
         x_values = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('step', flat=True))
         y_values = list(CentroidCount.objects.filter(id_observation=observation).filter(centroid=centroid).values_list('count', flat=True))
+
+        # x_max is used as defintion of the length of the xaxis 
         x_max = list(CentroidCount.objects.filter(id_observation=observation).values_list('step', flat=True))
 
         # Reusing x_values for step list as it is the same data
@@ -67,10 +70,14 @@ def list_view(request, centroid, observation, image_choice, step):
         plot_graph = Plot(x_values, y_values, x_max)
             
 
-        ## Exception Management for initial load of Page
+        # key_observation is the KEY that reasearcher are using to identiy the images and observations 
         key_observation = (Observation.objects.get(id_observation__in=[observation])).observation
+
+        # The hek URL is used to point the researcher to more details to the website of Heliophysics Events Knowledgebase Coverage Registry
+        # for the respective observation that is chosen right now
         hek_url = (Observation.objects.get(id_observation__in=[observation])).hek_url
 
+        # Full context variables that can be loaded once an observation is chosen
         context={
                                                                             'zipped_list':zipped_list,
                                                                             'centroid':centroid, 
@@ -87,9 +94,11 @@ def list_view(request, centroid, observation, image_choice, step):
     return render(request, 'centroid_webapp/observation_list.html', context=context)
 
 def Plot(x, y, x_max):
+    # Exception management for x-axis length. If there is no observation then the x-axis is set to 0 in order to load an empty plot
     if not x_max:
         x_max=1
 
+    # Scatter plot to display the step where the centroid occured and how many times it did with the count on the y axis
     scatter = go.Scatter(
                     x=x, 
                     y=y, 
@@ -101,6 +110,7 @@ def Plot(x, y, x_max):
                     name = 'Step: ', 
                     )
 
+    # The bar plot is used to connect the bottom line with the dot of the scatter plot
     bar = go.Bar(
                 x=x,
                 y=y,
@@ -110,6 +120,7 @@ def Plot(x, y, x_max):
                 ),
     )
 
+    # Some layout settings like, size, x-axis range, colors of plot, and titles
     layout = go.Layout(
                     title='Number of appearances for Centroids in Observation', 
                     width=1200,
@@ -130,10 +141,13 @@ def Plot(x, y, x_max):
                     showlegend=False,
                     )
     
+    # Load both traces of plot as data proceed to the Figure to create the plot
     data = [scatter, bar]
     fig = go.Figure(data=data, layout=layout)
 
     fig.update_layout(hovermode='x unified')
+
+    # Create an <div> of the plot in order to be able to display it in the HTML Template
     plot_div = plot(fig, include_plotlyjs=False, output_type='div')
 
     return plot_div
@@ -144,6 +158,7 @@ def detail_plot(observation, centroid, nx, ny, image_choice, step):
     qs_Ypixels = Ypixels.objects.filter(id_observation=observation, step=step).values_list('ypixels',('l_'+str(image_choice)))
     find_id = pd.DataFrame.from_records(qs_Ypixels.values('ypixels',('l_'+str(image_choice))))
 
+    # Exception management to send out empty plot if there is no image ID to load
     id = qs_Ypixels[0][1]
     if not id:
         return plot_empty()
@@ -154,7 +169,7 @@ def detail_plot(observation, centroid, nx, ny, image_choice, step):
     path = str(find_image.path[0])      
 
     # Load image
-    path_to_file = ( 'https://www.cs.technik.fhnw.ch/iris/sji_png/images//{}').format(path)
+    path_to_file = ('https://www.cs.technik.fhnw.ch/iris/sji_png/images//{}').format(path)
     
     # Get Image shape
     img_array = io.imread(path_to_file)
@@ -183,8 +198,10 @@ def detail_plot(observation, centroid, nx, ny, image_choice, step):
 
     return fig
 
+# An emptly plot that is used as return if there is no data
 def plot_empty():
     fig = Figure()
+    fig = Figure(facecolor='#ebeff5')
     output = ioo.BytesIO()
     FigureCanvas(fig).print_png(output)
 
@@ -192,17 +209,24 @@ def plot_empty():
 
 def plot_png(request, centroid, observation, image_choice, step):
 
+    # Exception Management if no image type is chosen to load an empty plot
     if image_choice == 0:
         return plot_empty()
 
+    # Load data to create a detailed plot. Data is not loaded up front instead it is loaded just in time
     key_observation = (Observation.objects.get(id_observation=observation)).observation
     qs_Observation = Observation.objects.filter(observation=key_observation).values_list('observation', 'x_pixels', 'y_pixels')
+    
+    # Transform Querryset into Pandas Dataframe 
     centroid_df = pd.DataFrame.from_records(qs_Observation.values('observation', 'x_pixels', 'y_pixels'))
+
     # number of actual pixels in SJI
     nx = centroid_df['x_pixels'][0]
     ny = centroid_df['y_pixels'][0]
 
     fig = detail_plot(observation, centroid, nx, ny, image_choice, step)
+
+    # Transform the plot into a PNG File in order to store it for the HTML Template
     output = ioo.BytesIO()
     FigureCanvas(fig).print_png(output)
     return HttpResponse(output.getvalue(), content_type='image/png')
