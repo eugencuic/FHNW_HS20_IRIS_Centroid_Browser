@@ -37,6 +37,8 @@ def list_view(request, centroid, observation, image_choice, step):
     key_list = Observation.objects.filter(id_observation__in=[observation_list]).values_list('observation', flat=True)
     zipped_list = zip(observation_list, key_list)
 
+
+
     # Exception Management to capture cases where no data is available
     if observation == 0:
         key_observation = 'n/a'
@@ -228,5 +230,13 @@ def plot_png(request, centroid, observation, image_choice, step):
 
     # Transform the plot into a PNG File in order to store it for the HTML Template
     output = ioo.BytesIO()
-    FigureCanvas(fig).print_png(output)
-    return HttpResponse(output.getvalue(), content_type='image/png')
+    try: 
+        FigureCanvas(fig).print_png(output)
+        return HttpResponse(output.getvalue(), content_type='image/png')
+    except: 
+        fig = Figure()
+        fig = Figure(facecolor='#ebeff5')
+        output = ioo.BytesIO()
+        FigureCanvas(fig).print_png(output)
+
+        return HttpResponse(output.getvalue(), content_type='image/png')

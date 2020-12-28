@@ -53,7 +53,7 @@ class Ypixels(models.Model):
     id_ypixels = models.AutoField(primary_key=True)
     id_observation = models.ForeignKey(Observation, models.DO_NOTHING, db_column='id_observation', blank=True, null=True)
     step = models.SmallIntegerField(blank=True, null=True)
-    ypixels = models.TextField(blank=True, null=True)  # This field type is a guess.
+    ypixels = models.TextField(blank=True, null=True) 
     l_1330 = models.ForeignKey(Images, models.DO_NOTHING, db_column='L_1330', related_name='+', blank=True, null=True)  # Field name made lowercase.
     l_1400 = models.ForeignKey(Images, models.DO_NOTHING, db_column='L_1400', related_name='+', blank=True, null=True)  # Field name made lowercase.
     l_2796 = models.ForeignKey(Images, models.DO_NOTHING, db_column='L_2796', related_name='+', blank=True, null=True)  # Field name made lowercase.
