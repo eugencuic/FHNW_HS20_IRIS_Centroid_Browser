@@ -24,6 +24,10 @@ def test_plot():
     # expecting the function to run and therefore return a html div
     assert "<div>" in result
 
-def test_empty_plot():
-    result = plot_empty()
+centroid = 4
+observation = 'test'
+step = 33
+image_choice = 1330
+def test_detail_plot():
+    result = plot_png(centroid, observation, image_choice, step)
     assert "<div>" in result
