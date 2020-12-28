@@ -1,5 +1,5 @@
 import pytest
-from centroid_webapp.models import CentroidCount
+from centroid_webapp.models import *
 
 
 centroid = 44
